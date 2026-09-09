@@ -3,145 +3,103 @@ import {
     Size, 
     TextObject, 
     ImageObject, 
-    FigureObject, 
     CircleObject, 
     RectangleObject, 
-    TriangleObject 
+    TriangleObject, 
+    SlideObject,
+    ImageData,
+    TextData,
+    CircleData,
+    RectangleData,
+    TriangleData
 } from "../types/objects.js"
 import { Slide } from "../types/slide.js"
 
+function addSlideObject(slide: Slide, object: SlideObject): Slide {
+    return {
+        ...slide,
+        slideObjects: [
+            ...slide.slideObjects,
+            object
+        ]
+    }
+}
 
-function addTextObject(
-    slide: Slide, 
-    content: string, 
-    position: Coordinates,
-    size: Size,
-    fontFamily: string, 
-    fontSize: number, 
-    fontColor: string,
-    objectId: string
-): Slide {
+function createText(data: TextData, objectId: string): TextObject {
     const textObject: TextObject = {
-        type: 'Text',
-        text: content,
-        position: position,
-        size: size,
-        fontFamily,
-        fontSize,
-        color: fontColor,
+        type: 'text',
+        text: data.text,
+        position: data.position,
+        size: data.size,
+        color: data.color,
+        fontFamily: data.fontFamily,
+        fontSize: data.fontSize,
         id: objectId
     }
 
-    return {
-        ...slide,
-        slideObjects: [
-            ...slide.slideObjects,
-            textObject
-        ]
-    }
+    return textObject
 }
 
-function addImageObject(
-    slide: Slide, 
-    imageUrl: string, 
-    position: Coordinates,
-    size: Size,
-    objectId: string
-): Slide {
+function createImage(data: ImageData, objectId: string): ImageObject {
     const imageObject: ImageObject = {
-        type: 'Image',
-        position: position,
-        size: size,
-        src: imageUrl,
+        type: 'image',
+        src: data.src,
+        position: data.position,
+        size: data.size,
         id: objectId
     }
 
-    return {
-        ...slide,
-        slideObjects: [
-            ...slide.slideObjects,
-            imageObject
-        ]
-    }
+    return imageObject
 }
 
-function addFigureObject(slide: Slide, figure: FigureObject): Slide {
-    return {
-        ...slide,
-        slideObjects: [
-            ...slide.slideObjects,
-            figure
-        ]
-    }
-}
-
-function createCircle(
-    position: Coordinates,
-    size: Size,
-    color: string, 
-    objectId: string
-): CircleObject {
+function createCircle(data: CircleData, objectId: string): CircleObject {
     const circleObject: CircleObject = {
         type: 'Figure',
-        figureType: 'Circle',
-        position: position,
-        size: size,
-        color: color,
+        figureType: 'circle',
+        position: data.position,
+        size: data.size,
+        color: data.color,
         id: objectId
     }
 
     return circleObject
 }
 
-function createRectangle(
-    position: Coordinates,
-    size: Size,
-    color: string, 
-    objectId: string
-): RectangleObject {
+function createRectangle(data: RectangleData, objectId: string): RectangleObject {
     const rectangleObject: RectangleObject = {
         type: 'Figure',
-        figureType: 'Rectangle',
-        position: position,
-        size: size,
-        color: color,
+        figureType: 'rectangle',
+        position: data.position,
+        size: data.size,
+        color: data.color,
         id: objectId
     }
 
     return rectangleObject
 }
 
-function createTriangle(
-    position: Coordinates,
-    size: Size,
-    color: string, 
-    point1: Coordinates,
-    point2: Coordinates,
-    point3: Coordinates,
-    objectId: string
-): TriangleObject {
+function createTriangle(data: TriangleData, objectId: string): TriangleObject {
     const triangleObject: TriangleObject = {
         type: 'Figure',
-        figureType: 'Triangle',
-        position: position,
-        size: size,
-        color: color,
+        figureType: 'triangle',
+        position: data.position,
+        size: data.size,
+        color: data.color,
         id: objectId,
-        point1: point1,
-        point2: point2,
-        point3: point3,
+        point1: data.point1,
+        point2: data.point2,
+        point3: data.point3,
     }
 
     return triangleObject
 }
 
-function removeObjects(slide: Slide): Slide {
-    const slideObjects = slide.slideObjects.filter(object => !slide.selectedObjectIds.includes(object.id))
+function removeObjects(slide: Slide, selectedObjectIds: string[]): Slide {
+    const slideObjects = slide.slideObjects.filter(object => !selectedObjectIds.includes(object.id))
 
     return {
         ...slide,
-        slideObjects: slideObjects,
-        selectedObjectIds: []
+        slideObjects: slideObjects
     }
 }
 
@@ -160,23 +118,6 @@ function moveObject(slide: Slide, objectId: string, newCoords: Coordinates): Sli
     return {
         ...slide,
         slideObjects: objects
-    }
-}
-
-function setObjectSelection(slide: Slide, objectId: string): Slide {
-    const selectedObjectIds = [...slide.selectedObjectIds]
-
-    if (!selectedObjectIds.includes(objectId)) {
-        return {
-            ...slide,
-            selectedObjectIds: [...selectedObjectIds, objectId]
-        }
-    } else {
-        const newSelectedObjectIds = selectedObjectIds.filter(id => id != objectId)
-        return {
-            ...slide,
-            selectedObjectIds: newSelectedObjectIds
-        }
     }
 }
 
@@ -200,7 +141,7 @@ function resizeObject(slide: Slide, objectId: string, newSize: Size): Slide {
 
 function updateObjectColor(slide: Slide, objectId: string, newColor: string): Slide {
     const objects = slide.slideObjects.map(object => {
-        if (object.id == objectId && object.type != 'Image') {
+        if (object.id == objectId && object.type != 'image') {
             return {
                 ...object,
                 color: newColor
@@ -219,7 +160,7 @@ function updateObjectColor(slide: Slide, objectId: string, newColor: string): Sl
 
 function updateTextFontFamily(slide: Slide, objectId: string, newFontFamily: string): Slide {
     const objects = slide.slideObjects.map(object => {
-        if (object.id == objectId && object.type == 'Text') {
+        if (object.id == objectId && object.type == 'text') {
             return {
                 ...object,
                 fontFamily: newFontFamily
@@ -238,7 +179,7 @@ function updateTextFontFamily(slide: Slide, objectId: string, newFontFamily: str
 
 function updateTextFontSize(slide: Slide, objectId: string, newFontSize: number): Slide {
     const objects = slide.slideObjects.map(object => {
-        if (object.id == objectId && object.type == 'Text') {
+        if (object.id == objectId && object.type == 'text') {
             return {
                 ...object,
                 fontSize: newFontSize
@@ -255,13 +196,12 @@ function updateTextFontSize(slide: Slide, objectId: string, newFontSize: number)
 }
 
 export {
-    addTextObject,
-    addImageObject,
-    addFigureObject,
+    addSlideObject,
     createCircle,
     createRectangle,
     createTriangle,
-    setObjectSelection,
+    createText,
+    createImage,
     moveObject,
     removeObjects,
     resizeObject,

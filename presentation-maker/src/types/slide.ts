@@ -3,30 +3,29 @@ import { SlideObject } from "./objects.js"
 type Slide = {
     id: string,
     background: Background,
-    slideObjects: SlideObject[],
-    selectedObjectIds: string[]
+    slideObjects: SlideObject[]
 }
 
 type Background = SolidBackground | ImageBackground | GradientBackground | TransparentBackground
 
 type TransparentBackground = {
-    type: 'Transparent'
+    type: 'transparent'
 }
 
 type SolidBackground = {
     color: string,
-    type: 'Solid'
+    type: 'solid'
 }
 
 type ImageBackground = {
     src: string,
-    type: 'Image'
+    type: 'image'
 }
 
 type GradientBackground = {
     colors: string[],
     angle: number,
-    type: 'Gradient'
+    type: 'gradient'
 }
 
 export type {

@@ -8,15 +8,12 @@ function createPresentation(title: string, id: string, slideId: string): Present
             {
                 id: slideId,
                 background: {
-                    type: 'Solid',
+                    type: 'solid',
                     color: '#ffffff'
                 },
-                slideObjects: [],
-                selectedObjectIds: []
+                slideObjects: []
             }
-        ],
-        selectedSlideIds: [slideId],
-        currentSlideId: slideId
+        ]
     }
 }
 

@@ -17,8 +17,6 @@ describe('createPresentation', () => {
         expect(presentation.id).toBe(id)
         expect(presentation.title).toBe('My Presentation')
         expect(presentation.slides.length).toBe(1)
-        expect(presentation.currentSlideId).toBe(slideId)
-        expect(presentation.selectedSlideIds).toEqual([slideId])
     })
 })
 
@@ -27,9 +25,7 @@ describe('updatePresentationTitle', () => {
         const presentation: Presentation = {
             id: generateId(),
             title: 'Presentation name',
-            slides: [],
-            currentSlideId: '',
-            selectedSlideIds: []
+            slides: []
         }
         
         const updatedPresentation = updatePresentationTitle(presentation, 'New presentation name')
@@ -44,9 +40,7 @@ describe('savePresentation', () => {
         const presentation: Presentation = {
             id: generateId(),
             title: 'Presentation name',
-            slides: [],
-            currentSlideId: '',
-            selectedSlideIds: []
+            slides: []
         }
 
         const json = savePresentation(presentation)
@@ -60,9 +54,7 @@ describe('loadPresentation', () => {
         const presentation: Presentation = {
             id: generateId(),
             title: 'Presentation name',
-            slides: [],
-            currentSlideId: '',
-            selectedSlideIds: []
+            slides: []
         }
 
         const json = JSON.stringify(presentation)

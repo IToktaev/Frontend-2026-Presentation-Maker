@@ -1,32 +1,26 @@
 import { describe, it, expect } from 'vitest'
-import { generateId, generateNewObjectIds } from '../functions/idGeneration.js'
-import { addSlide, moveSlides, removeSlides, setSlideSelection, setCurrentSlide, duplicateSlide, setSlideBackgroundColor, setSlideBackgroundImage, setSlideBackgroundTransparent, setSlideBackgroundGradient } from '../functions/slide.js'
+import { generateId } from '../functions/idGeneration.js'
+import { addSlide, moveSlides, removeSlides, duplicateSlide, setSlideBackgroundColor, setSlideBackgroundImage, setSlideBackgroundTransparent, setSlideBackgroundGradient } from '../functions/slide.js'
 import { Presentation } from '../types/presentation.js'
 import { Slide } from '../types/slide.js'
 
 describe('addSlide', () => {
-    it('should add slide to empty slidelist, set new currentSlideId and new selected slide id', () => {
+    it('should add slide to empty slidelist', () => {
         const presentation: Presentation = {
             id: generateId(),
             title: 'Presentation name',
-            slides: [],
-            currentSlideId: '',
-            selectedSlideIds: []
+            slides: []
         }
 
         const slideId = generateId()
         const presentationWithNewSlide = addSlide(presentation, slideId)
 
         expect(presentationWithNewSlide.slides.length).toBe(1)
-        expect(presentationWithNewSlide.currentSlideId).toBe(slideId)
-        expect(presentationWithNewSlide.selectedSlideIds).toEqual([slideId])
 
         expect(presentation.slides.length).toBe(0)
-        expect(presentation.currentSlideId).toBe('')
-        expect(presentation.selectedSlideIds).toEqual([])
     }) 
 
-    it('should add slide to not empty slidelist, set new currentSlideId and new selected slide id', () => {
+    it('should add slide to not empty slidelist', () => {
         const firstSlideId = generateId()
 
         const presentation: Presentation = {
@@ -36,32 +30,25 @@ describe('addSlide', () => {
                 {
                     id: firstSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#ff0000'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 },
-            ],
-            currentSlideId: firstSlideId,
-            selectedSlideIds: [firstSlideId]
+            ]
         }
 
         const slideId = generateId()
         const presentationWithNewSlide = addSlide(presentation, slideId)
 
         expect(presentationWithNewSlide.slides.length).toBe(2)
-        expect(presentationWithNewSlide.currentSlideId).toBe(slideId)
-        expect(presentationWithNewSlide.selectedSlideIds).toEqual([firstSlideId, slideId])
 
         expect(presentation.slides.length).toBe(1)
-        expect(presentation.currentSlideId).toBe(firstSlideId)
-        expect(presentation.selectedSlideIds).toEqual([firstSlideId])
     }) 
 })
 
 describe('removeSlides', () => {
-    it('should remove each slide (all selected)', () => {
+    it('should remove each slide', () => {
         const firstSlideId = generateId()
         const secondSlideId = generateId()
         const thirdSlideId = generateId()
@@ -73,47 +60,40 @@ describe('removeSlides', () => {
                 {
                     id: firstSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#ff0000'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 },
                 {
                     id: secondSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#00ff00'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 },
                 {
                     id: thirdSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#0000ff'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 },
-            ],
-            currentSlideId: thirdSlideId,
-            selectedSlideIds: [firstSlideId, secondSlideId, thirdSlideId]
+            ]
         }
 
-        const presentationWithSecondSlide = removeSlides(presentation, presentation.selectedSlideIds)
+        const presentationWithSecondSlide = removeSlides(
+            presentation, [firstSlideId, secondSlideId, thirdSlideId]
+        )
 
         expect(presentationWithSecondSlide.slides.length).toBe(0)
-        expect(presentationWithSecondSlide.currentSlideId).toBe('')
-        expect(presentationWithSecondSlide.selectedSlideIds).toEqual([])
 
         expect(presentation.slides.length).toBe(3)
-        expect(presentation.currentSlideId).toBe(thirdSlideId)
-        expect(presentation.selectedSlideIds).toEqual([firstSlideId, secondSlideId, thirdSlideId])
     }) 
 
-    it('should remove all selectedSlides', () => {
+    it('should remove part of slides', () => {
         const firstSlideId = generateId()
         const secondSlideId = generateId()
         const thirdSlideId = generateId()
@@ -125,44 +105,35 @@ describe('removeSlides', () => {
                 {
                     id: firstSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#ff0000'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 },
                 {
                     id: secondSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#00ff00'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 },
                 {
                     id: thirdSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#0000ff'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 },
-            ],
-            currentSlideId: thirdSlideId,
-            selectedSlideIds: [firstSlideId, thirdSlideId]
+            ]
         }
 
-        const presentationWithSecondSlide = removeSlides(presentation, presentation.selectedSlideIds)
+        const presentationWithSecondSlide = removeSlides(presentation, [firstSlideId, thirdSlideId])
 
         expect(presentationWithSecondSlide.slides.length).toBe(1)
-        expect(presentationWithSecondSlide.currentSlideId).toBe(secondSlideId)
-        expect(presentationWithSecondSlide.selectedSlideIds).toEqual([])
 
         expect(presentation.slides.length).toBe(3)
-        expect(presentation.currentSlideId).toBe(thirdSlideId)
-        expect(presentation.selectedSlideIds).toEqual([firstSlideId, thirdSlideId])
     }) 
 })
 
@@ -179,36 +150,31 @@ describe('moveSlides', () => {
                 {
                     id: firstSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#ff0000'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 },
                 {
                     id: secondSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#00ff00'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 },
                 {
                     id: thirdSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#0000ff'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 }
-            ],
-            currentSlideId: secondSlideId,
-            selectedSlideIds: [secondSlideId]
+            ]
         }
 
-        const updatedPresentation = moveSlides(presentation, [secondSlideId], 0)
+        const updatedPresentation = moveSlides(presentation, [secondSlideId, firstSlideId, thirdSlideId])
 
         expect(updatedPresentation.slides.map(slide => slide.id)).toEqual([
             secondSlideId,
@@ -235,36 +201,31 @@ describe('moveSlides', () => {
                 {
                     id: firstSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#ff0000'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 },
                 {
                     id: secondSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#00ff00'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 },
                 {
                     id: thirdSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#0000ff'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 }
-            ],
-            currentSlideId: secondSlideId,
-            selectedSlideIds: [secondSlideId]
+            ]
         }
 
-        const updatedPresentation = moveSlides(presentation, [secondSlideId, thirdSlideId], 0)
+        const updatedPresentation = moveSlides(presentation, [secondSlideId, thirdSlideId, firstSlideId])
 
         expect(updatedPresentation.slides.map(slide => slide.id)).toEqual([
             secondSlideId,
@@ -291,36 +252,31 @@ describe('moveSlides', () => {
                 {
                     id: firstSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#ff0000'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 },
                 {
                     id: secondSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#00ff00'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 },
                 {
                     id: thirdSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#0000ff'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 }
-            ],
-            currentSlideId: firstSlideId,
-            selectedSlideIds: [firstSlideId]
+            ]
         }
 
-        const updatedPresentation = moveSlides(presentation, [firstSlideId], 1)
+        const updatedPresentation = moveSlides(presentation, [secondSlideId, firstSlideId, thirdSlideId])
         
         expect(updatedPresentation.slides.map(slide => slide.id)).toEqual([
             secondSlideId,
@@ -348,45 +304,41 @@ describe('moveSlides', () => {
                 {
                     id: firstSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#ff0000'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 },
                 {
                     id: secondSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#00ff00'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 },
                 {
                     id: thirdSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#0000ff'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 },
                 {
                     id: fourthSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#f0f0f0'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 }
-            ],
-            currentSlideId: firstSlideId,
-            selectedSlideIds: [firstSlideId]
+            ]
         }
 
-        const updatedPresentation = moveSlides(presentation, [firstSlideId, fourthSlideId], 1)
+        const updatedPresentation = moveSlides(
+            presentation, [secondSlideId, firstSlideId, fourthSlideId, thirdSlideId]
+        )
         
         expect(updatedPresentation.slides.map(slide => slide.id)).toEqual([
             secondSlideId,
@@ -415,36 +367,31 @@ describe('moveSlides', () => {
                 {
                     id: firstSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#ff0000'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 },
                 {
                     id: secondSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#00ff00'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 },
                 {
                     id: thirdSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#0000ff'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 }
-            ],
-            currentSlideId: secondSlideId,
-            selectedSlideIds: [secondSlideId]
+            ]
         }
 
-        const updatedPresentation = moveSlides(presentation, [firstSlideId], 2)
+        const updatedPresentation = moveSlides(presentation, [secondSlideId, thirdSlideId, firstSlideId])
 
         expect(updatedPresentation.slides.map(slide => slide.id)).toEqual([
             secondSlideId,
@@ -471,36 +418,31 @@ describe('moveSlides', () => {
                 {
                     id: firstSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#ff0000'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 },
                 {
                     id: secondSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#00ff00'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 },
                 {
                     id: thirdSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#0000ff'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 }
-            ],
-            currentSlideId: secondSlideId,
-            selectedSlideIds: [secondSlideId]
+            ]
         }
 
-        const updatedPresentation = moveSlides(presentation, [firstSlideId, secondSlideId], 1)
+        const updatedPresentation = moveSlides(presentation, [thirdSlideId, firstSlideId, secondSlideId])
 
         expect(updatedPresentation.slides.map(slide => slide.id)).toEqual([
             thirdSlideId,
@@ -527,36 +469,31 @@ describe('moveSlides', () => {
                 {
                     id: firstSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#ff0000'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 },
                 {
                     id: secondSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#00ff00'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 },
                 {
                     id: thirdSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#0000ff'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 }
-            ],
-            currentSlideId: secondSlideId,
-            selectedSlideIds: [secondSlideId]
+            ]
         }
 
-        const updatedPresentation = moveSlides(presentation, [firstSlideId], 0)
+        const updatedPresentation = moveSlides(presentation, [firstSlideId, secondSlideId, thirdSlideId])
 
         expect(updatedPresentation.slides.map(slide => slide.id)).toEqual([
             firstSlideId,
@@ -583,27 +520,23 @@ describe('moveSlides', () => {
                 {
                     id: firstSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#ff0000'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 },
                 {
                     id: secondSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#00ff00'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 }
-            ],
-            currentSlideId: secondSlideId,
-            selectedSlideIds: [secondSlideId]
+            ]
         }
 
-        const updatedPresentation = moveSlides(presentation, [thirdSlideId], 0)
+        const updatedPresentation = moveSlides(presentation, [firstSlideId, secondSlideId, thirdSlideId])
 
         expect(updatedPresentation.slides.map(slide => slide.id)).toEqual([
             firstSlideId,
@@ -617,240 +550,8 @@ describe('moveSlides', () => {
     })
 })
 
-describe('set current slide', () => {
-    it('should change current slide', () => {
-        const firstSlideId = generateId()
-        const secondSlideId = generateId()
-
-        const presentation: Presentation = {
-            id: generateId(),
-            title: 'Presentation name',
-            slides: [
-                {
-                    id: firstSlideId,
-                    background: {
-                        type: 'Solid',
-                        color: '#ff0000'
-                    },
-                    slideObjects: [],
-                    selectedObjectIds: []
-                },
-                {
-                    id: secondSlideId,
-                    background: {
-                        type: 'Solid',
-                        color: '#00ff00'
-                    },
-                    slideObjects: [],
-                    selectedObjectIds: []
-                }
-            ],
-            currentSlideId: firstSlideId,
-            selectedSlideIds: [firstSlideId]
-        }
-
-        const updatedPresentation = setCurrentSlide(presentation, secondSlideId)
-
-        expect(updatedPresentation.currentSlideId).toBe(secondSlideId)
-        
-        expect(presentation.currentSlideId).toBe(firstSlideId)
-    })
-
-    it('should set current slide again', () => {
-        const firstSlideId = generateId()
-        const secondSlideId = generateId()
-
-        const presentation: Presentation = {
-            id: generateId(),
-            title: 'Presentation name',
-            slides: [
-                {
-                    id: firstSlideId,
-                    background: {
-                        type: 'Solid',
-                        color: '#ff0000'
-                    },
-                    slideObjects: [],
-                    selectedObjectIds: []
-                },
-                {
-                    id: secondSlideId,
-                    background: {
-                        type: 'Solid',
-                        color: '#00ff00'
-                    },
-                    slideObjects: [],
-                    selectedObjectIds: []
-                }
-            ],
-            currentSlideId: firstSlideId,
-            selectedSlideIds: [firstSlideId]
-        }
-
-        const updatedPresentation = setCurrentSlide(presentation, firstSlideId)
-
-        expect(updatedPresentation.currentSlideId).toBe(firstSlideId)
-        
-        expect(presentation.currentSlideId).toBe(firstSlideId)
-    })
-})
-
-describe('setSlideSelection', () => {
-    it('should select new slide with shift', () => {
-        const firstSlideId = generateId()
-        const secondSlideId = generateId()
-
-        const presentation: Presentation = {
-            id: generateId(),
-            title: 'Presentation name',
-            slides: [
-                {
-                    id: firstSlideId,
-                    background: {
-                        type: 'Solid',
-                        color: '#ff0000'
-                    },
-                    slideObjects: [],
-                    selectedObjectIds: []
-                },
-                {
-                    id: secondSlideId,
-                    background: {
-                        type: 'Solid',
-                        color: '#00ff00'
-                    },
-                    slideObjects: [],
-                    selectedObjectIds: []
-                }
-            ],
-            currentSlideId: firstSlideId,
-            selectedSlideIds: [firstSlideId]
-        }
-
-        const updatedPresentation = setSlideSelection(presentation, secondSlideId, false)
-
-        expect(updatedPresentation.selectedSlideIds).toEqual([firstSlideId, secondSlideId])
-        
-        expect(presentation.selectedSlideIds).toEqual([firstSlideId])
-    })
-
-    it('should change slide selection width shift', () => {
-        const firstSlideId = generateId()
-        const secondSlideId = generateId()
-
-        const presentation: Presentation = {
-            id: generateId(),
-            title: 'Presentation name',
-            slides: [
-                {
-                    id: firstSlideId,
-                    background: {
-                        type: 'Solid',
-                        color: '#ff0000'
-                    },
-                    slideObjects: [],
-                    selectedObjectIds: []
-                },
-                {
-                    id: secondSlideId,
-                    background: {
-                        type: 'Solid',
-                        color: '#00ff00'
-                    },
-                    slideObjects: [],
-                    selectedObjectIds: []
-                }
-            ],
-            currentSlideId: firstSlideId,
-            selectedSlideIds: [firstSlideId, secondSlideId]
-        }
-
-        const updatedPresentation = setSlideSelection(presentation, secondSlideId, false)
-
-        expect(updatedPresentation.selectedSlideIds).toEqual([firstSlideId])
-        
-        expect(presentation.selectedSlideIds).toEqual([firstSlideId, secondSlideId])
-    })
-
-    it('should try to change current slide selection with shift', () => {
-        const firstSlideId = generateId()
-        const secondSlideId = generateId()
-
-        const presentation: Presentation = {
-            id: generateId(),
-            title: 'Presentation name',
-            slides: [
-                {
-                    id: firstSlideId,
-                    background: {
-                        type: 'Solid',
-                        color: '#ff0000'
-                    },
-                    slideObjects: [],
-                    selectedObjectIds: []
-                },
-                {
-                    id: secondSlideId,
-                    background: {
-                        type: 'Solid',
-                        color: '#00ff00'
-                    },
-                    slideObjects: [],
-                    selectedObjectIds: []
-                }
-            ],
-            currentSlideId: firstSlideId,
-            selectedSlideIds: [firstSlideId, secondSlideId]
-        }
-
-        const updatedPresentation = setSlideSelection(presentation, firstSlideId, false)
-
-        expect(updatedPresentation.selectedSlideIds).toEqual([firstSlideId, secondSlideId])
-        
-        expect(presentation.selectedSlideIds).toEqual([firstSlideId, secondSlideId])
-    })
-
-    it('should change new current slide without shift', () => {
-        const firstSlideId = generateId()
-        const secondSlideId = generateId()
-
-        const presentation: Presentation = {
-            id: generateId(),
-            title: 'Presentation name',
-            slides: [
-                {
-                    id: firstSlideId,
-                    background: {
-                        type: 'Solid',
-                        color: '#ff0000'
-                    },
-                    slideObjects: [],
-                    selectedObjectIds: []
-                },
-                {
-                    id: secondSlideId,
-                    background: {
-                        type: 'Solid',
-                        color: '#00ff00'
-                    },
-                    slideObjects: [],
-                    selectedObjectIds: []
-                }
-            ],
-            currentSlideId: firstSlideId,
-            selectedSlideIds: [firstSlideId, secondSlideId]
-        }
-
-        const updatedPresentation = setSlideSelection(presentation, secondSlideId, true)
-
-        expect(updatedPresentation.selectedSlideIds).toEqual([secondSlideId])
-        
-        expect(presentation.selectedSlideIds).toEqual([firstSlideId, secondSlideId])
-    })
-})
-
 describe('duplicateSlide', () => {
-    it('should copy slide with another id, change current slide and slide selection', () => {
+    it('should copy first slide with another id', () => {
         const firstSlideId = generateId()
         const slideId = generateId()
 
@@ -861,56 +562,49 @@ describe('duplicateSlide', () => {
                 {
                     id: firstSlideId,
                     background: {
-                        type: 'Solid',
+                        type: 'solid',
                         color: '#ff0000'
                     },
-                    slideObjects: [],
-                    selectedObjectIds: []
+                    slideObjects: []
                 }
-            ],
-            currentSlideId: firstSlideId,
-            selectedSlideIds: [firstSlideId]
+            ]
         }
 
-        const currentSlide = presentation.slides.find(slide => slide.id == presentation.currentSlideId)
-        const newObjectIds = generateNewObjectIds(currentSlide?.slideObjects)
-        const updatedPresentation = duplicateSlide(presentation, slideId, newObjectIds)
+        const currentSlide = presentation.slides.find(slide => slide.id == firstSlideId)
+
+        if (!currentSlide) {
+            return
+        }
+
+        const newObjectIds = currentSlide.slideObjects.map(() => generateId())
+        const updatedPresentation = duplicateSlide(presentation, firstSlideId, slideId, newObjectIds)
 
         expect(updatedPresentation.slides.map(slide => slide.id)).toEqual([
             firstSlideId,
             slideId
         ])
-        expect(updatedPresentation.currentSlideId).toBe(slideId)
-        expect(updatedPresentation.selectedSlideIds).toEqual([slideId])
 
         expect(presentation.slides.map(slide => slide.id)).toEqual([
             firstSlideId
         ])
-        expect(presentation.currentSlideId).toBe(firstSlideId)
     })
 
     it('should copy unexisting slide', () => {
+        const unexistingSlideId = generateId()
         const slideId = generateId()
 
         const presentation: Presentation = {
             id: generateId(),
             title: 'Presentation name',
-            slides: [],
-            currentSlideId: '',
-            selectedSlideIds: []
+            slides: []
         }
 
-        const currentSlide = presentation.slides.find(slide => slide.id == presentation.currentSlideId)
-        const newObjectIds = generateNewObjectIds(currentSlide?.slideObjects)
-        const updatedPresentation = duplicateSlide(presentation, slideId, newObjectIds)
+        const newObjectIds: string[] = []
+        const updatedPresentation = duplicateSlide(presentation, unexistingSlideId, slideId, newObjectIds)
 
         expect(updatedPresentation.slides.map(slide => slide.id)).toEqual([])
-        expect(updatedPresentation.currentSlideId).toBe('')
-        expect(updatedPresentation.selectedSlideIds).toEqual([])
 
         expect(presentation.slides.map(slide => slide.id)).toEqual([])
-        expect(presentation.currentSlideId).toBe('')
-        expect(presentation.selectedSlideIds).toEqual([])
     })
 }) 
 
@@ -921,21 +615,20 @@ describe('setSlideBackgroundColor', () => {
         const slide: Slide = {
             id: slideId,
             background: {
-                type: 'Transparent'
+                type: 'transparent'
             },
-            slideObjects: [],
-            selectedObjectIds: []
+            slideObjects: []
         }
 
         const updatedSlide = setSlideBackgroundColor(slide, '#ffffff')
 
         expect(updatedSlide.background).toEqual({
-            type: 'Solid',
+            type: 'solid',
             color: '#ffffff'
         })
 
         expect(slide.background).toEqual({
-            type: 'Transparent'
+            type: 'transparent'
         })
     })
 
@@ -945,22 +638,21 @@ describe('setSlideBackgroundColor', () => {
         const slide: Slide = {
             id: slideId,
             background: {
-                type: 'Solid',
+                type: 'solid',
                 color: '#000000'
             },
-            slideObjects: [],
-            selectedObjectIds: []
+            slideObjects: []
         }
 
         const updatedSlide = setSlideBackgroundColor(slide, '#ffffff')
 
         expect(updatedSlide.background).toEqual({
-            type: 'Solid',
+            type: 'solid',
             color: '#ffffff'
         })
 
         expect(slide.background).toEqual({
-            type: 'Solid',
+            type: 'solid',
             color: '#000000'
         })
     })
@@ -973,21 +665,20 @@ describe('setSlideBackgroundImage', () => {
         const slide: Slide = {
             id: slideId,
             background: {
-                type: 'Transparent'
+                type: 'transparent'
             },
-            slideObjects: [],
-            selectedObjectIds: []
+            slideObjects: []
         }
 
         const updatedSlide = setSlideBackgroundImage(slide, 'url')
 
         expect(updatedSlide.background).toEqual({
-            type: 'Image',
+            type: 'image',
             src: 'url'
         })
 
         expect(slide.background).toEqual({
-            type: 'Transparent'
+            type: 'transparent'
         })
     })
 
@@ -997,22 +688,21 @@ describe('setSlideBackgroundImage', () => {
         const slide: Slide = {
             id: slideId,
             background: {
-                type: 'Image',
+                type: 'image',
                 src: 'url'
             },
-            slideObjects: [],
-            selectedObjectIds: []
+            slideObjects: []
         }
 
         const updatedSlide = setSlideBackgroundImage(slide, 'new_url')
 
         expect(updatedSlide.background).toEqual({
-            type: 'Image',
+            type: 'image',
             src: 'new_url'
         })
 
         expect(slide.background).toEqual({
-            type: 'Image',
+            type: 'image',
             src: 'url'
         })
     })
@@ -1025,22 +715,21 @@ describe('setSlideBackgroundColor', () => {
         const slide: Slide = {
             id: slideId,
             background: {
-                type: 'Transparent'
+                type: 'transparent'
             },
-            slideObjects: [],
-            selectedObjectIds: []
+            slideObjects: []
         }
 
         const updatedSlide = setSlideBackgroundGradient(slide, ['#ffffff', '#000000'], 0)
 
         expect(updatedSlide.background).toEqual({
-            type: 'Gradient',
+            type: 'gradient',
             colors: ['#ffffff', '#000000'],
             angle: 0
         })
 
         expect(slide.background).toEqual({
-            type: 'Transparent'
+            type: 'transparent'
         })
     })
 
@@ -1050,24 +739,23 @@ describe('setSlideBackgroundColor', () => {
         const slide: Slide = {
             id: slideId,
             background: {
-                type: 'Gradient',
+                type: 'gradient',
                 colors: ['#ffffff', '#000000'],
                 angle: 0
             },
-            slideObjects: [],
-            selectedObjectIds: []
+            slideObjects: []
         }
 
         const updatedSlide = setSlideBackgroundGradient(slide, ['#ff0000', '#00ff00'], 90)
 
         expect(updatedSlide.background).toEqual({
-            type: 'Gradient',
+            type: 'gradient',
             colors: ['#ff0000', '#00ff00'],
             angle: 90
         })
 
         expect(slide.background).toEqual({
-            type: 'Gradient',
+            type: 'gradient',
             colors: ['#ffffff', '#000000'],
             angle: 0
         })
@@ -1081,21 +769,20 @@ describe('setSlideTransparentBackground', () => {
         const slide: Slide = {
             id: slideId,
             background: {
-                type: 'Solid',
+                type: 'solid',
                 color: '#ffffff'
             },
-            slideObjects: [],
-            selectedObjectIds: []
+            slideObjects: []
         }
 
         const updatedSlide = setSlideBackgroundTransparent(slide)
 
         expect(updatedSlide.background).toEqual({
-            type: 'Transparent'
+            type: 'transparent'
         })
 
         expect(slide.background).toEqual({
-            type: 'Solid',
+            type: 'solid',
             color: '#ffffff'
         })
     })

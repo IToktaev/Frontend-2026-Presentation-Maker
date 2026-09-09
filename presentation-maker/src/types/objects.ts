@@ -1,9 +1,7 @@
 type SlideObject = TextObject | ImageObject | FigureObject
 
-type DefaultObject = {
+type DefaultObject = ObjectData & {
     id: string,
-    position: Coordinates,
-    size: Size
 }
 
 type Coordinates = {
@@ -16,38 +14,64 @@ type Size = {
     height: number
 }
 
-type TextObject = DefaultObject & {
+type TextObject = DefaultObject & TextData & {
     text: string,
-    fontSize: number,
-    fontFamily: string,
-    type: 'Text',
-    color: string
+    type: 'text',
 }
 
-type ImageObject = DefaultObject & {
+type ImageObject = DefaultObject & ImageData & {
     src: string,
-    type: 'Image'
+    type: 'image'
 }
 
-type FigureObject = DefaultObject & {
+type FigureObject = DefaultObject & FigureData & {
     type: 'Figure',
-    figureType: 'Circle' | 'Triangle' | 'Rectangle',
-    color: string
+    figureType: 'circle' | 'rectangle' | 'triangle'
 }
 
-type CircleObject = FigureObject & {
-    figureType: 'Circle'
+type CircleObject = FigureObject & CircleData & {
+    figureType: 'circle'
 }
 
-type RectangleObject = FigureObject & {
-    figureType: 'Rectangle'
+type RectangleObject = FigureObject & RectangleData & {
+    figureType: 'rectangle'
 }
 
-type TriangleObject = FigureObject & {
+type TriangleObject = FigureObject & TriangleData & {
     point1: Coordinates,
     point2: Coordinates,
     point3: Coordinates,
-    figureType: 'Triangle'
+    figureType: 'triangle'
+}
+
+type ObjectData = {
+    position: Coordinates,
+    size: Size
+}
+
+type TextData = ObjectData & {
+    fontFamily: string,
+    fontSize: number,
+    text: string,
+    color: string
+}
+
+type ImageData = ObjectData & {
+    src: string
+}
+
+type FigureData = ObjectData & {
+    color: string
+}
+
+type CircleData = FigureData
+
+type RectangleData = FigureData
+
+type TriangleData = FigureData & {
+    point1: Coordinates,
+    point2: Coordinates,
+    point3: Coordinates
 }
 
 export type {
@@ -59,5 +83,12 @@ export type {
     RectangleObject,
     TriangleObject,
     Coordinates,
-    Size
+    Size,
+    ObjectData, 
+    TextData,
+    ImageData,
+    FigureData,
+    CircleData,
+    RectangleData,
+    TriangleData
 }
