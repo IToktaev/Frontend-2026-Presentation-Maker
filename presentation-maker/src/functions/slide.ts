@@ -44,8 +44,10 @@ function moveSlides(presentation: Presentation, slideIds: string[]): Presentatio
 function duplicateSlide(
     presentation: Presentation, 
     slideId: string,
-    newSlideId: string,
-    newObjectIds: string[]
+    newIds: {
+        slideId: string,
+        objectIds: string[]
+    }
 ): Presentation {
     const slides = [...presentation.slides]
     const slideIndex = slides.findIndex(slide => slide.id == slideId)
@@ -55,14 +57,12 @@ function duplicateSlide(
         return presentation
     }
 
-    const newSlide: Slide = {
-        id: newSlideId,
-        background: slide.background,
-        slideObjects: slide.slideObjects.map((object, index) => ({
-            ...object,
-            id: newObjectIds[index]
-        }))
-    }
+    const newSlide: Slide = structuredClone(slide)
+    newSlide.id = newIds.slideId
+
+    newSlide.slideObjects.map((object, index) => {
+        object.id = newIds.objectIds[index];
+    })
     
     slides.splice(slideIndex + 1, 0, newSlide)
 

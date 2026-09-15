@@ -1,18 +1,39 @@
 import { describe, it, expect } from 'vitest'
 import { generateId } from '../functions/idGeneration.js'
-import { addSlide, moveSlides, removeSlides, duplicateSlide, setSlideBackgroundColor, setSlideBackgroundImage, setSlideBackgroundTransparent, setSlideBackgroundGradient } from '../functions/slide.js'
+import { 
+    addSlide, 
+    moveSlides, 
+    removeSlides,
+    duplicateSlide, 
+    setSlideBackgroundColor, 
+    setSlideBackgroundImage, 
+    setSlideBackgroundTransparent, 
+    setSlideBackgroundGradient 
+} from '../functions/slide.js'
 import { Presentation } from '../types/presentation.js'
 import { Slide } from '../types/slide.js'
 
+function createTestPresentation(slideIds: string[]): Presentation {
+    return {
+        id: generateId(),
+        title: 'Presentation name',
+        slides: slideIds.map(id => createTestSlide(id))
+    }
+}
+
+function createTestSlide(slideId: string): Slide {
+    return {
+        id: slideId,
+        background: {type: 'transparent'},
+        slideObjects: []
+    }
+}
+
 describe('addSlide', () => {
     it('should add slide to empty slidelist', () => {
-        const presentation: Presentation = {
-            id: generateId(),
-            title: 'Presentation name',
-            slides: []
-        }
-
+        const presentation: Presentation = createTestPresentation([])
         const slideId = generateId()
+
         const presentationWithNewSlide = addSlide(presentation, slideId)
 
         expect(presentationWithNewSlide.slides.length).toBe(1)
@@ -21,24 +42,9 @@ describe('addSlide', () => {
     }) 
 
     it('should add slide to not empty slidelist', () => {
-        const firstSlideId = generateId()
+        const [slideId, firstSlideId] = [generateId(), generateId()]
+        const presentation: Presentation = createTestPresentation([firstSlideId])
 
-        const presentation: Presentation = {
-            id: firstSlideId,
-            title: 'Presentation name',
-            slides: [
-                {
-                    id: firstSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#ff0000'
-                    },
-                    slideObjects: []
-                },
-            ]
-        }
-
-        const slideId = generateId()
         const presentationWithNewSlide = addSlide(presentation, slideId)
 
         expect(presentationWithNewSlide.slides.length).toBe(2)
@@ -49,40 +55,10 @@ describe('addSlide', () => {
 
 describe('removeSlides', () => {
     it('should remove each slide', () => {
-        const firstSlideId = generateId()
-        const secondSlideId = generateId()
-        const thirdSlideId = generateId()
-
-        const presentation: Presentation = {
-            id: generateId(),
-            title: 'Presentation name',
-            slides: [
-                {
-                    id: firstSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#ff0000'
-                    },
-                    slideObjects: []
-                },
-                {
-                    id: secondSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#00ff00'
-                    },
-                    slideObjects: []
-                },
-                {
-                    id: thirdSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#0000ff'
-                    },
-                    slideObjects: []
-                },
-            ]
-        }
+        const [firstSlideId, secondSlideId, thirdSlideId] = [generateId(), generateId(), generateId()]
+        const presentation: Presentation = createTestPresentation(
+            [firstSlideId, secondSlideId, thirdSlideId]
+        )
 
         const presentationWithSecondSlide = removeSlides(
             presentation, [firstSlideId, secondSlideId, thirdSlideId]
@@ -94,40 +70,10 @@ describe('removeSlides', () => {
     }) 
 
     it('should remove part of slides', () => {
-        const firstSlideId = generateId()
-        const secondSlideId = generateId()
-        const thirdSlideId = generateId()
-
-        const presentation: Presentation = {
-            id: generateId(),
-            title: 'Presentation name',
-            slides: [
-                {
-                    id: firstSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#ff0000'
-                    },
-                    slideObjects: []
-                },
-                {
-                    id: secondSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#00ff00'
-                    },
-                    slideObjects: []
-                },
-                {
-                    id: thirdSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#0000ff'
-                    },
-                    slideObjects: []
-                },
-            ]
-        }
+        const [firstSlideId, secondSlideId, thirdSlideId] = [generateId(), generateId(), generateId()]
+        const presentation: Presentation = createTestPresentation(
+            [firstSlideId, secondSlideId, thirdSlideId]
+        )
 
         const presentationWithSecondSlide = removeSlides(presentation, [firstSlideId, thirdSlideId])
 
@@ -139,40 +85,10 @@ describe('removeSlides', () => {
 
 describe('moveSlides', () => {
     it('should move one slide to start of the list', () => {
-        const firstSlideId = generateId()
-        const secondSlideId = generateId()
-        const thirdSlideId = generateId()
-
-        const presentation: Presentation = {
-            id: generateId(),
-            title: 'Presentation name',
-            slides: [
-                {
-                    id: firstSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#ff0000'
-                    },
-                    slideObjects: []
-                },
-                {
-                    id: secondSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#00ff00'
-                    },
-                    slideObjects: []
-                },
-                {
-                    id: thirdSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#0000ff'
-                    },
-                    slideObjects: []
-                }
-            ]
-        }
+        const [firstSlideId, secondSlideId, thirdSlideId] = [generateId(), generateId(), generateId()]
+        const presentation: Presentation = createTestPresentation(
+            [firstSlideId, secondSlideId, thirdSlideId]
+        )
 
         const updatedPresentation = moveSlides(presentation, [secondSlideId, firstSlideId, thirdSlideId])
 
@@ -190,40 +106,10 @@ describe('moveSlides', () => {
     })
 
     it('should move two slides to start of the list', () => {
-        const firstSlideId = generateId()
-        const secondSlideId = generateId()
-        const thirdSlideId = generateId()
-
-        const presentation: Presentation = {
-            id: generateId(),
-            title: 'Presentation name',
-            slides: [
-                {
-                    id: firstSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#ff0000'
-                    },
-                    slideObjects: []
-                },
-                {
-                    id: secondSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#00ff00'
-                    },
-                    slideObjects: []
-                },
-                {
-                    id: thirdSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#0000ff'
-                    },
-                    slideObjects: []
-                }
-            ]
-        }
+        const [firstSlideId, secondSlideId, thirdSlideId] = [generateId(), generateId(), generateId()]
+        const presentation: Presentation = createTestPresentation(
+            [firstSlideId, secondSlideId, thirdSlideId]
+        )
 
         const updatedPresentation = moveSlides(presentation, [secondSlideId, thirdSlideId, firstSlideId])
 
@@ -241,40 +127,10 @@ describe('moveSlides', () => {
     })
 
     it('should move one slide to middle of the list', () => {
-        const firstSlideId = generateId()
-        const secondSlideId = generateId()
-        const thirdSlideId = generateId()
-
-        const presentation: Presentation = {
-            id: generateId(),
-            title: 'Presentation name',
-            slides: [
-                {
-                    id: firstSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#ff0000'
-                    },
-                    slideObjects: []
-                },
-                {
-                    id: secondSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#00ff00'
-                    },
-                    slideObjects: []
-                },
-                {
-                    id: thirdSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#0000ff'
-                    },
-                    slideObjects: []
-                }
-            ]
-        }
+        const [firstSlideId, secondSlideId, thirdSlideId] = [generateId(), generateId(), generateId()]
+        const presentation: Presentation = createTestPresentation(
+            [firstSlideId, secondSlideId, thirdSlideId]
+        )
 
         const updatedPresentation = moveSlides(presentation, [secondSlideId, firstSlideId, thirdSlideId])
         
@@ -292,49 +148,12 @@ describe('moveSlides', () => {
     })
 
     it('should move two slides to middle of the list', () => {
-        const firstSlideId = generateId()
-        const secondSlideId = generateId()
-        const thirdSlideId = generateId()
-        const fourthSlideId = generateId()
-
-        const presentation: Presentation = {
-            id: generateId(),
-            title: 'Presentation name',
-            slides: [
-                {
-                    id: firstSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#ff0000'
-                    },
-                    slideObjects: []
-                },
-                {
-                    id: secondSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#00ff00'
-                    },
-                    slideObjects: []
-                },
-                {
-                    id: thirdSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#0000ff'
-                    },
-                    slideObjects: []
-                },
-                {
-                    id: fourthSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#f0f0f0'
-                    },
-                    slideObjects: []
-                }
-            ]
-        }
+        const [firstSlideId, secondSlideId, thirdSlideId, fourthSlideId] = [
+            generateId(), generateId(), generateId(), generateId()
+        ]
+        const presentation: Presentation = createTestPresentation(
+            [firstSlideId, secondSlideId, thirdSlideId, fourthSlideId]
+        )
 
         const updatedPresentation = moveSlides(
             presentation, [secondSlideId, firstSlideId, fourthSlideId, thirdSlideId]
@@ -356,40 +175,10 @@ describe('moveSlides', () => {
     })
 
     it('should move slide to end of the list', () => {
-        const firstSlideId = generateId()
-        const secondSlideId = generateId()
-        const thirdSlideId = generateId()
-
-        const presentation: Presentation = {
-            id: generateId(),
-            title: 'Presentation name',
-            slides: [
-                {
-                    id: firstSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#ff0000'
-                    },
-                    slideObjects: []
-                },
-                {
-                    id: secondSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#00ff00'
-                    },
-                    slideObjects: []
-                },
-                {
-                    id: thirdSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#0000ff'
-                    },
-                    slideObjects: []
-                }
-            ]
-        }
+        const [firstSlideId, secondSlideId, thirdSlideId] = [generateId(), generateId(), generateId()]
+        const presentation: Presentation = createTestPresentation(
+            [firstSlideId, secondSlideId, thirdSlideId]
+        )
 
         const updatedPresentation = moveSlides(presentation, [secondSlideId, thirdSlideId, firstSlideId])
 
@@ -407,40 +196,10 @@ describe('moveSlides', () => {
     })
 
     it('should move two slides to end of the list', () => {
-        const firstSlideId = generateId()
-        const secondSlideId = generateId()
-        const thirdSlideId = generateId()
-
-        const presentation: Presentation = {
-            id: generateId(),
-            title: 'Presentation name',
-            slides: [
-                {
-                    id: firstSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#ff0000'
-                    },
-                    slideObjects: []
-                },
-                {
-                    id: secondSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#00ff00'
-                    },
-                    slideObjects: []
-                },
-                {
-                    id: thirdSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#0000ff'
-                    },
-                    slideObjects: []
-                }
-            ]
-        }
+        const [firstSlideId, secondSlideId, thirdSlideId] = [generateId(), generateId(), generateId()]
+        const presentation: Presentation = createTestPresentation(
+            [firstSlideId, secondSlideId, thirdSlideId]
+        )
 
         const updatedPresentation = moveSlides(presentation, [thirdSlideId, firstSlideId, secondSlideId])
 
@@ -458,40 +217,10 @@ describe('moveSlides', () => {
     })
 
     it('should move slide to it current place', () => {
-        const firstSlideId = generateId()
-        const secondSlideId = generateId()
-        const thirdSlideId = generateId()
-
-        const presentation: Presentation = {
-            id: generateId(),
-            title: 'Presentation name',
-            slides: [
-                {
-                    id: firstSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#ff0000'
-                    },
-                    slideObjects: []
-                },
-                {
-                    id: secondSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#00ff00'
-                    },
-                    slideObjects: []
-                },
-                {
-                    id: thirdSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#0000ff'
-                    },
-                    slideObjects: []
-                }
-            ]
-        }
+        const [firstSlideId, secondSlideId, thirdSlideId] = [generateId(), generateId(), generateId()]
+        const presentation: Presentation = createTestPresentation(
+            [firstSlideId, secondSlideId, thirdSlideId]
+        )
 
         const updatedPresentation = moveSlides(presentation, [firstSlideId, secondSlideId, thirdSlideId])
 
@@ -509,32 +238,8 @@ describe('moveSlides', () => {
     })
 
     it('should move unexisting slide', () => {
-        const firstSlideId = generateId()
-        const secondSlideId = generateId()
-        const thirdSlideId = generateId()
-
-        const presentation: Presentation = {
-            id: generateId(),
-            title: 'Presentation name',
-            slides: [
-                {
-                    id: firstSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#ff0000'
-                    },
-                    slideObjects: []
-                },
-                {
-                    id: secondSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#00ff00'
-                    },
-                    slideObjects: []
-                }
-            ]
-        }
+        const [firstSlideId, secondSlideId, thirdSlideId] = [generateId(), generateId(), generateId()]
+        const presentation: Presentation = createTestPresentation([firstSlideId, secondSlideId])
 
         const updatedPresentation = moveSlides(presentation, [firstSlideId, secondSlideId, thirdSlideId])
 
@@ -552,24 +257,8 @@ describe('moveSlides', () => {
 
 describe('duplicateSlide', () => {
     it('should copy first slide with another id', () => {
-        const firstSlideId = generateId()
-        const slideId = generateId()
-
-        const presentation: Presentation = {
-            id: generateId(),
-            title: 'Presentation name',
-            slides: [
-                {
-                    id: firstSlideId,
-                    background: {
-                        type: 'solid',
-                        color: '#ff0000'
-                    },
-                    slideObjects: []
-                }
-            ]
-        }
-
+        const [firstSlideId, newSlideId] = [generateId(), generateId()]
+        const presentation: Presentation = createTestPresentation([firstSlideId])
         const currentSlide = presentation.slides.find(slide => slide.id == firstSlideId)
 
         if (!currentSlide) {
@@ -577,12 +266,15 @@ describe('duplicateSlide', () => {
         }
 
         const newObjectIds = currentSlide.slideObjects.map(() => generateId())
-        const updatedPresentation = duplicateSlide(presentation, firstSlideId, slideId, newObjectIds)
+        const newIds = {slideId: newSlideId, objectIds: newObjectIds}
+
+        const updatedPresentation = duplicateSlide(presentation, firstSlideId, newIds)
 
         expect(updatedPresentation.slides.map(slide => slide.id)).toEqual([
             firstSlideId,
-            slideId
+            newSlideId
         ])
+        expect(updatedPresentation.slides[1].slideObjects.map(object => object.id)).toEqual(newObjectIds)
 
         expect(presentation.slides.map(slide => slide.id)).toEqual([
             firstSlideId
@@ -591,16 +283,11 @@ describe('duplicateSlide', () => {
 
     it('should copy unexisting slide', () => {
         const unexistingSlideId = generateId()
-        const slideId = generateId()
-
-        const presentation: Presentation = {
-            id: generateId(),
-            title: 'Presentation name',
-            slides: []
-        }
-
+        const presentation: Presentation = createTestPresentation([])
         const newObjectIds: string[] = []
-        const updatedPresentation = duplicateSlide(presentation, unexistingSlideId, slideId, newObjectIds)
+        const newIds = {slideId: unexistingSlideId, objectIds: newObjectIds}
+
+        const updatedPresentation = duplicateSlide(presentation, unexistingSlideId, newIds)
 
         expect(updatedPresentation.slides.map(slide => slide.id)).toEqual([])
 
@@ -611,14 +298,7 @@ describe('duplicateSlide', () => {
 describe('setSlideBackgroundColor', () => {
     it('should set slide background color to unsolid background', () => {
         const slideId = generateId()
-
-        const slide: Slide = {
-            id: slideId,
-            background: {
-                type: 'transparent'
-            },
-            slideObjects: []
-        }
+        const slide: Slide = createTestSlide(slideId)
 
         const updatedSlide = setSlideBackgroundColor(slide, '#ffffff')
 
@@ -634,15 +314,8 @@ describe('setSlideBackgroundColor', () => {
 
     it('should set slide background color to solid background', () => {
         const slideId = generateId()
-
-        const slide: Slide = {
-            id: slideId,
-            background: {
-                type: 'solid',
-                color: '#000000'
-            },
-            slideObjects: []
-        }
+        const slide: Slide = createTestSlide(slideId)
+        slide.background = {type: 'solid', color: '#000000'}
 
         const updatedSlide = setSlideBackgroundColor(slide, '#ffffff')
 
@@ -661,14 +334,7 @@ describe('setSlideBackgroundColor', () => {
 describe('setSlideBackgroundImage', () => {
     it('should set slide background image', () => {
         const slideId = generateId()
-
-        const slide: Slide = {
-            id: slideId,
-            background: {
-                type: 'transparent'
-            },
-            slideObjects: []
-        }
+        const slide: Slide = createTestSlide(slideId)
 
         const updatedSlide = setSlideBackgroundImage(slide, 'url')
 
@@ -684,15 +350,8 @@ describe('setSlideBackgroundImage', () => {
 
     it('should set slide background image except another image', () => {
         const slideId = generateId()
-
-        const slide: Slide = {
-            id: slideId,
-            background: {
-                type: 'image',
-                src: 'url'
-            },
-            slideObjects: []
-        }
+        const slide: Slide = createTestSlide(slideId)
+        slide.background = {type: 'image', src: 'url'}
 
         const updatedSlide = setSlideBackgroundImage(slide, 'new_url')
 
@@ -711,14 +370,7 @@ describe('setSlideBackgroundImage', () => {
 describe('setSlideBackgroundColor', () => {
     it('should set slide background gradient to ungradient background', () => {
         const slideId = generateId()
-
-        const slide: Slide = {
-            id: slideId,
-            background: {
-                type: 'transparent'
-            },
-            slideObjects: []
-        }
+        const slide: Slide = createTestSlide(slideId)
 
         const updatedSlide = setSlideBackgroundGradient(slide, ['#ffffff', '#000000'], 0)
 
@@ -735,16 +387,8 @@ describe('setSlideBackgroundColor', () => {
 
     it('should set slide background gradient to gradient background', () => {
         const slideId = generateId()
-
-        const slide: Slide = {
-            id: slideId,
-            background: {
-                type: 'gradient',
-                colors: ['#ffffff', '#000000'],
-                angle: 0
-            },
-            slideObjects: []
-        }
+        const slide: Slide = createTestSlide(slideId)
+        slide.background = {type: 'gradient', colors: ['#ffffff', '#000000'], angle: 0}
 
         const updatedSlide = setSlideBackgroundGradient(slide, ['#ff0000', '#00ff00'], 90)
 
@@ -765,15 +409,8 @@ describe('setSlideBackgroundColor', () => {
 describe('setSlideTransparentBackground', () => {
     it('should set slide transparent', () => {
         const slideId = generateId()
-
-        const slide: Slide = {
-            id: slideId,
-            background: {
-                type: 'solid',
-                color: '#ffffff'
-            },
-            slideObjects: []
-        }
+        const slide: Slide = createTestSlide(slideId)
+        slide.background = {type: 'solid', color: '#ffffff'}
 
         const updatedSlide = setSlideBackgroundTransparent(slide)
 

@@ -15,12 +15,10 @@ type Size = {
 }
 
 type TextObject = DefaultObject & TextData & {
-    text: string,
     type: 'text',
 }
 
 type ImageObject = DefaultObject & ImageData & {
-    src: string,
     type: 'image'
 }
 
