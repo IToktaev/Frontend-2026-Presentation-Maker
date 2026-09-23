@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { generateId } from '../functions/idGeneration.js'
+import { generateId, generateIds } from '../functions/idGeneration.js'
 import { 
     addSlide, 
     moveSlides, 
@@ -42,8 +42,8 @@ describe('addSlide', () => {
     }) 
 
     it('should add slide to not empty slidelist', () => {
-        const [slideId, firstSlideId] = [generateId(), generateId()]
-        const presentation: Presentation = createTestPresentation([firstSlideId])
+        const [slideId, presentationId] = generateIds(2);
+        const presentation: Presentation = createTestPresentation([presentationId])
 
         const presentationWithNewSlide = addSlide(presentation, slideId)
 
@@ -55,13 +55,13 @@ describe('addSlide', () => {
 
 describe('removeSlides', () => {
     it('should remove each slide', () => {
-        const [firstSlideId, secondSlideId, thirdSlideId] = [generateId(), generateId(), generateId()]
+        const ids = generateIds(3);
         const presentation: Presentation = createTestPresentation(
-            [firstSlideId, secondSlideId, thirdSlideId]
+            ids
         )
 
         const presentationWithSecondSlide = removeSlides(
-            presentation, [firstSlideId, secondSlideId, thirdSlideId]
+            presentation, ids
         )
 
         expect(presentationWithSecondSlide.slides.length).toBe(0)
@@ -70,7 +70,7 @@ describe('removeSlides', () => {
     }) 
 
     it('should remove part of slides', () => {
-        const [firstSlideId, secondSlideId, thirdSlideId] = [generateId(), generateId(), generateId()]
+        const [firstSlideId, secondSlideId, thirdSlideId] = generateIds(3);
         const presentation: Presentation = createTestPresentation(
             [firstSlideId, secondSlideId, thirdSlideId]
         )
@@ -85,7 +85,7 @@ describe('removeSlides', () => {
 
 describe('moveSlides', () => {
     it('should move one slide to start of the list', () => {
-        const [firstSlideId, secondSlideId, thirdSlideId] = [generateId(), generateId(), generateId()]
+        const [firstSlideId, secondSlideId, thirdSlideId] = generateIds(3);
         const presentation: Presentation = createTestPresentation(
             [firstSlideId, secondSlideId, thirdSlideId]
         )
@@ -106,7 +106,7 @@ describe('moveSlides', () => {
     })
 
     it('should move two slides to start of the list', () => {
-        const [firstSlideId, secondSlideId, thirdSlideId] = [generateId(), generateId(), generateId()]
+        const [firstSlideId, secondSlideId, thirdSlideId] = generateIds(3);
         const presentation: Presentation = createTestPresentation(
             [firstSlideId, secondSlideId, thirdSlideId]
         )
@@ -127,7 +127,7 @@ describe('moveSlides', () => {
     })
 
     it('should move one slide to middle of the list', () => {
-        const [firstSlideId, secondSlideId, thirdSlideId] = [generateId(), generateId(), generateId()]
+        const [firstSlideId, secondSlideId, thirdSlideId] = generateIds(3);
         const presentation: Presentation = createTestPresentation(
             [firstSlideId, secondSlideId, thirdSlideId]
         )
@@ -148,9 +148,7 @@ describe('moveSlides', () => {
     })
 
     it('should move two slides to middle of the list', () => {
-        const [firstSlideId, secondSlideId, thirdSlideId, fourthSlideId] = [
-            generateId(), generateId(), generateId(), generateId()
-        ]
+        const [firstSlideId, secondSlideId, thirdSlideId, fourthSlideId] = generateIds(4);
         const presentation: Presentation = createTestPresentation(
             [firstSlideId, secondSlideId, thirdSlideId, fourthSlideId]
         )
@@ -175,7 +173,7 @@ describe('moveSlides', () => {
     })
 
     it('should move slide to end of the list', () => {
-        const [firstSlideId, secondSlideId, thirdSlideId] = [generateId(), generateId(), generateId()]
+        const [firstSlideId, secondSlideId, thirdSlideId] = generateIds(3)
         const presentation: Presentation = createTestPresentation(
             [firstSlideId, secondSlideId, thirdSlideId]
         )
@@ -196,7 +194,7 @@ describe('moveSlides', () => {
     })
 
     it('should move two slides to end of the list', () => {
-        const [firstSlideId, secondSlideId, thirdSlideId] = [generateId(), generateId(), generateId()]
+        const [firstSlideId, secondSlideId, thirdSlideId] = generateIds(3);
         const presentation: Presentation = createTestPresentation(
             [firstSlideId, secondSlideId, thirdSlideId]
         )
@@ -217,28 +215,18 @@ describe('moveSlides', () => {
     })
 
     it('should move slide to it current place', () => {
-        const [firstSlideId, secondSlideId, thirdSlideId] = [generateId(), generateId(), generateId()]
-        const presentation: Presentation = createTestPresentation(
-            [firstSlideId, secondSlideId, thirdSlideId]
-        )
+        const ids = generateIds(3)
+        const presentation: Presentation = createTestPresentation(ids)
 
-        const updatedPresentation = moveSlides(presentation, [firstSlideId, secondSlideId, thirdSlideId])
+        const updatedPresentation = moveSlides(presentation, ids)
 
-        expect(updatedPresentation.slides.map(slide => slide.id)).toEqual([
-            firstSlideId,
-            secondSlideId,
-            thirdSlideId
-        ])
+        expect(updatedPresentation.slides.map(slide => slide.id)).toEqual(ids)
 
-        expect(presentation.slides.map(slide => slide.id)).toEqual([
-            firstSlideId,
-            secondSlideId,
-            thirdSlideId
-        ])
+        expect(presentation.slides.map(slide => slide.id)).toEqual(ids)
     })
 
     it('should move unexisting slide', () => {
-        const [firstSlideId, secondSlideId, thirdSlideId] = [generateId(), generateId(), generateId()]
+        const [firstSlideId, secondSlideId, thirdSlideId] = generateIds(3)
         const presentation: Presentation = createTestPresentation([firstSlideId, secondSlideId])
 
         const updatedPresentation = moveSlides(presentation, [firstSlideId, secondSlideId, thirdSlideId])
@@ -257,7 +245,7 @@ describe('moveSlides', () => {
 
 describe('duplicateSlide', () => {
     it('should copy first slide with another id', () => {
-        const [firstSlideId, newSlideId] = [generateId(), generateId()]
+        const [firstSlideId, newSlideId] = generateIds(2)
         const presentation: Presentation = createTestPresentation([firstSlideId])
         const currentSlide = presentation.slides.find(slide => slide.id == firstSlideId)
 

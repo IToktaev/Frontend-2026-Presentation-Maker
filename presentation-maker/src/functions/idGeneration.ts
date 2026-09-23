@@ -4,6 +4,11 @@ function generateId(): string {
     return `${timestamp}-${randomPart}`;
 }
 
+function generateIds(length: number): string[] {
+    return Array.from({ length }, () => generateId());
+}
+
 export {
-    generateId
+    generateId,
+    generateIds
 }

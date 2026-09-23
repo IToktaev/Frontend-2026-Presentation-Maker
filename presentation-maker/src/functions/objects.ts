@@ -11,7 +11,8 @@ import {
     TextData,
     CircleData,
     RectangleData,
-    TriangleData
+    TriangleData,
+    ObjectUpdate
 } from "../types/objects.js"
 import { Slide } from "../types/slide.js"
 
@@ -34,6 +35,7 @@ function createText(data: TextData, objectId: string): TextObject {
         color: data.color,
         fontFamily: data.fontFamily,
         fontSize: data.fontSize,
+        fontStyle: data.fontStyle,
         id: objectId
     }
 
@@ -54,7 +56,7 @@ function createImage(data: ImageData, objectId: string): ImageObject {
 
 function createCircle(data: CircleData, objectId: string): CircleObject {
     const circleObject: CircleObject = {
-        type: 'Figure',
+        type: 'figure',
         figureType: 'circle',
         position: data.position,
         size: data.size,
@@ -67,7 +69,7 @@ function createCircle(data: CircleData, objectId: string): CircleObject {
 
 function createRectangle(data: RectangleData, objectId: string): RectangleObject {
     const rectangleObject: RectangleObject = {
-        type: 'Figure',
+        type: 'figure',
         figureType: 'rectangle',
         position: data.position,
         size: data.size,
@@ -80,7 +82,7 @@ function createRectangle(data: RectangleData, objectId: string): RectangleObject
 
 function createTriangle(data: TriangleData, objectId: string): TriangleObject {
     const triangleObject: TriangleObject = {
-        type: 'Figure',
+        type: 'figure',
         figureType: 'triangle',
         position: data.position,
         size: data.size,
@@ -103,86 +105,19 @@ function removeObjects(slide: Slide, selectedObjectIds: string[]): Slide {
     }
 }
 
-function moveObject(slide: Slide, objectId: string, newCoords: Coordinates): Slide {
-    const objects = slide.slideObjects.map(object => {
-        if (object.id == objectId) {
-            return {
-                ...object,
-                position: newCoords
-            }
-        } else {
-            return object
-        }
-    })
-
-    return {
-        ...slide,
-        slideObjects: objects
-    }
+function isUpdateForbidden(object: SlideObject, update: ObjectUpdate): boolean {
+    return  (object.type == 'image' && update.property == 'color') ||
+            (object.type != 'text' && update.property == 'fontFamily') || 
+            (object.type != 'text' && update.property == 'fontSize') ||
+            (object.type != 'text' && update.property == 'fontStyle') 
 }
 
-function resizeObject(slide: Slide, objectId: string, newSize: Size): Slide {
+function updateObject(slide: Slide, objectId: string, update: ObjectUpdate): Slide {
     const objects = slide.slideObjects.map(object => {
-        if (object.id == objectId) {
+        if (object.id == objectId && !isUpdateForbidden(object, update)) {
             return {
                 ...object,
-                size: newSize
-            }
-        } else {
-            return object
-        }
-    })
-
-    return {
-        ...slide,
-        slideObjects: objects
-    }
-}
-
-function updateObjectColor(slide: Slide, objectId: string, newColor: string): Slide {
-    const objects = slide.slideObjects.map(object => {
-        if (object.id == objectId && object.type != 'image') {
-            return {
-                ...object,
-                color: newColor
-            }
-        } else {
-            return object
-        }
-    })
-
-
-    return {
-        ...slide,
-        slideObjects: objects
-    }
-}
-
-function updateTextFontFamily(slide: Slide, objectId: string, newFontFamily: string): Slide {
-    const objects = slide.slideObjects.map(object => {
-        if (object.id == objectId && object.type == 'text') {
-            return {
-                ...object,
-                fontFamily: newFontFamily
-            }
-        } else {
-            return object
-        }
-    })
-    
-
-    return {
-        ...slide,
-        slideObjects: objects
-    }
-}
-
-function updateTextFontSize(slide: Slide, objectId: string, newFontSize: number): Slide {
-    const objects = slide.slideObjects.map(object => {
-        if (object.id == objectId && object.type == 'text') {
-            return {
-                ...object,
-                fontSize: newFontSize
+                [update.property]: update.value
             }
         } else {
             return object
@@ -202,10 +137,6 @@ export {
     createTriangle,
     createText,
     createImage,
-    moveObject,
     removeObjects,
-    resizeObject,
-    updateObjectColor,
-    updateTextFontFamily,
-    updateTextFontSize
+    updateObject
 }
