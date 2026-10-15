@@ -1,0 +1,101 @@
+.toolbar {
+    width: 100%;
+    height: 240px;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+h3 {
+    margin: 0;
+    padding: 0;
+}
+
+.title {
+    width: 400px;
+    height: 120px;
+    background-color: #000000;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.titleInput {
+    font-size: 36px;
+    color: #ffffff;
+    background: none;
+    width: 80%;
+}
+
+.slideShowBlock, .voiceBlock {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.slideShowTitle, .voiceTitle {
+    font-size: 36px;
+}
+
+.voiceBlockBottomSection {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+}
+
+.slideShow, .voiceIcon {
+    height: 100px;
+}
+
+.voiceInfo {
+    height: 80px;
+}
+
+.slideShow {
+    width: 100px;
+    background-color: #dad9d9;
+    transition: all 0.2s ease;
+    border-radius: 10px;
+}
+
+.voiceIcon, .voiceInfo {
+    width: 60px;
+}
+
+.voiceInfo {
+    background-color: #dad9d9;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    border: 7px solid #000000;
+}
+
+.slideShow img, .voiceIcon img{
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.voiceInfo img {
+    width: 60%;
+    height: 60%;
+    display: block;
+}
+
+.titleInput:focus {
+    border: 3px solid #ffffff;
+}
+
+.slideShow:hover, .voiceInfo:hover {
+    transform: scale(1.1);
+    background-color: #f6ff00;
+}

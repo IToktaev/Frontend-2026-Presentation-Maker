@@ -1,0 +1,7 @@
+.content {
+    border-radius: 5px;
+    background-color: #ffffff;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+}

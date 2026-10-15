@@ -1,4 +1,4 @@
-import { SlideObject } from "./objects.js"
+import type { SlideObject } from "./objects.js"
 
 type Slide = {
     id: string,

@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest'
-import { generateId } from '../functions/idGeneration.js'
+import { generateId } from '../model/functions/idGeneration.js'
 import { 
     createPresentation, 
     loadPresentation, 
     savePresentation, 
     updatePresentationTitle 
-} from '../functions/presentation.js'
-import { Presentation } from '../types/presentation.js'
+} from '../model/functions/presentation.js'
+import type { Presentation } from '../model/types/presentation.js'
 
 function createTestPresentation(): Presentation {
     return {

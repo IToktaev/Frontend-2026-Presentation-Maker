@@ -14,7 +14,9 @@ type Size = {
     height: number
 }
 
-type FontStyle = 'normal' | 'cursive' | 'bold'
+type FontStyle = 'normal' | 'italic'
+type FontWeight = 'normal' | 'bold'
+type TextDecoration = 'none' | 'underline'
 
 type TextObject = DefaultObject & TextData & {
     type: 'text',
@@ -53,6 +55,8 @@ type TextData = ObjectData & {
     fontFamily: string,
     fontSize: number,
     fontStyle: FontStyle,
+    fontWeight: FontWeight,
+    textDecoration: TextDecoration,
     text: string,
     color: string
 }
@@ -75,14 +79,6 @@ type TriangleData = FigureData & {
     point3: Coordinates
 }
 
-type ObjectUpdate = 
-    { property: 'position'; value: Coordinates } |
-    { property: 'size'; value: Size } |
-    { property: 'color'; value: string } |
-    { property: 'fontFamily'; value: string } |
-    { property: 'fontSize'; value: number } |
-    { property: 'fontStyle'; value: FontStyle }
-
 export type {
     SlideObject,
     TextObject,
@@ -94,12 +90,13 @@ export type {
     Coordinates,
     Size,
     FontStyle,
+    FontWeight,
+    TextDecoration,
     ObjectData, 
     TextData,
     ImageData,
     FigureData,
     CircleData,
     RectangleData,
-    TriangleData,
-    ObjectUpdate
+    TriangleData
 }

@@ -1,0 +1,56 @@
+.palette {
+    width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.color {
+    width: 60px;
+    height: 60px;
+    border-radius: 100%;
+    transition: all 0.2s ease;
+}
+
+.red {
+    background-color: red;
+}
+
+.green {
+    background-color: green;
+}
+
+.blue {
+    background-color: blue;
+}
+
+.yellow {
+    background-color: yellow;
+}
+
+.orange {
+    background-color: orange;
+}
+
+.lightBlue {
+    background-color: lightblue;
+}
+
+.purple {
+    background-color: purple;
+}
+
+.selected {
+    width: 80px;
+    height: 80px;
+    border: 7px solid #dad9d9;
+}
+
+.color:hover {
+    cursor: pointer;
+    transform: scale(1.2);
+}

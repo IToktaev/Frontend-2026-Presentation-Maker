@@ -1,17 +1,18 @@
 import { describe, it, expect } from 'vitest'
-import { generateId, generateIds } from '../functions/idGeneration.js'
+import { generateId, generateIds } from '../model/functions/idGeneration.js'
 import { 
     addSlide, 
     moveSlides, 
     removeSlides,
-    duplicateSlide, 
-    setSlideBackgroundColor, 
-    setSlideBackgroundImage, 
-    setSlideBackgroundTransparent, 
-    setSlideBackgroundGradient 
-} from '../functions/slide.js'
-import { Presentation } from '../types/presentation.js'
-import { Slide } from '../types/slide.js'
+    duplicateSlide,
+    createBackgroundColor,
+    setBackgroundInPresentation,
+    createBackgroundImage,
+    createBackgroundGradient,
+    createBackgroundTransparent
+} from '../model/functions/slide.js'
+import type { Presentation } from '../model/types/presentation.js'
+import type { Slide } from '../model/types/slide.js'
 
 function createTestPresentation(slideIds: string[]): Presentation {
     return {
@@ -247,7 +248,7 @@ describe('duplicateSlide', () => {
     it('should copy first slide with another id', () => {
         const [firstSlideId, newSlideId] = generateIds(2)
         const presentation: Presentation = createTestPresentation([firstSlideId])
-        const currentSlide = presentation.slides.find(slide => slide.id == firstSlideId)
+        const currentSlide = presentation.slides.find(slide => slide.id === firstSlideId)
 
         if (!currentSlide) {
             return
@@ -286,34 +287,42 @@ describe('duplicateSlide', () => {
 describe('setSlideBackgroundColor', () => {
     it('should set slide background color to unsolid background', () => {
         const slideId = generateId()
-        const slide: Slide = createTestSlide(slideId)
+        const presentation: Presentation = createTestPresentation([slideId])
 
-        const updatedSlide = setSlideBackgroundColor(slide, '#ffffff')
+        const background = createBackgroundColor('#ffffff')
+        const updatedPresentation = setBackgroundInPresentation(presentation, {
+            background: background,
+            slideId: slideId
+        })
 
-        expect(updatedSlide.background).toEqual({
+        expect(updatedPresentation.slides[0].background).toEqual({
             type: 'solid',
             color: '#ffffff'
         })
 
-        expect(slide.background).toEqual({
+        expect(presentation.slides[0].background).toEqual({
             type: 'transparent'
         })
     })
 
     it('should set slide background color to solid background', () => {
         const slideId = generateId()
-        const slide: Slide = createTestSlide(slideId)
-        slide.background = {type: 'solid', color: '#000000'}
+        const presentation: Presentation = createTestPresentation([slideId])
+        presentation.slides[0].background = {type: 'solid', color: '#000000'}
 
-        const updatedSlide = setSlideBackgroundColor(slide, '#ffffff')
+        const background = createBackgroundColor('#ffffff')
+        const updatedPresentation = setBackgroundInPresentation(presentation, {
+            background: background,
+            slideId: slideId
+        })
 
-        expect(updatedSlide.background).toEqual({
+        expect(updatedPresentation.slides[0].background).toEqual({
             type: 'solid',
             color: '#ffffff'
         })
 
-        expect(slide.background).toEqual({
-            type: 'solid',
+        expect(presentation.slides[0].background).toEqual({
+            type: 'solid', 
             color: '#000000'
         })
     })
@@ -322,35 +331,43 @@ describe('setSlideBackgroundColor', () => {
 describe('setSlideBackgroundImage', () => {
     it('should set slide background image', () => {
         const slideId = generateId()
-        const slide: Slide = createTestSlide(slideId)
+        const presentation: Presentation = createTestPresentation([slideId])
 
-        const updatedSlide = setSlideBackgroundImage(slide, 'url')
+        const background = createBackgroundImage('url')
+        const updatedPresentation = setBackgroundInPresentation(presentation, {
+            background: background,
+            slideId: slideId
+        })
 
-        expect(updatedSlide.background).toEqual({
+        expect(updatedPresentation.slides[0].background).toEqual({
             type: 'image',
             src: 'url'
         })
 
-        expect(slide.background).toEqual({
+        expect(presentation.slides[0].background).toEqual({
             type: 'transparent'
         })
     })
 
     it('should set slide background image except another image', () => {
         const slideId = generateId()
-        const slide: Slide = createTestSlide(slideId)
-        slide.background = {type: 'image', src: 'url'}
+        const presentation: Presentation = createTestPresentation([slideId])
+        presentation.slides[0].background = {type: 'image', src: 'url1'}
 
-        const updatedSlide = setSlideBackgroundImage(slide, 'new_url')
-
-        expect(updatedSlide.background).toEqual({
-            type: 'image',
-            src: 'new_url'
+        const background = createBackgroundImage('url2')
+        const updatedPresentation = setBackgroundInPresentation(presentation, {
+            background: background,
+            slideId: slideId
         })
 
-        expect(slide.background).toEqual({
+        expect(updatedPresentation.slides[0].background).toEqual({
             type: 'image',
-            src: 'url'
+            src: 'url2'
+        })
+
+        expect(presentation.slides[0].background).toEqual({
+            type: 'image', 
+            src: 'url1'
         })
     })
 })
@@ -358,57 +375,69 @@ describe('setSlideBackgroundImage', () => {
 describe('setSlideBackgroundColor', () => {
     it('should set slide background gradient to ungradient background', () => {
         const slideId = generateId()
-        const slide: Slide = createTestSlide(slideId)
+        const presentation: Presentation = createTestPresentation([slideId])
 
-        const updatedSlide = setSlideBackgroundGradient(slide, ['#ffffff', '#000000'], 0)
-
-        expect(updatedSlide.background).toEqual({
-            type: 'gradient',
-            colors: ['#ffffff', '#000000'],
-            angle: 0
+        const background = createBackgroundGradient(['#ff0000', '#00ff00'], 90)
+        const updatedPresentation = setBackgroundInPresentation(presentation, {
+            background: background,
+            slideId: slideId
         })
 
-        expect(slide.background).toEqual({
+        expect(updatedPresentation.slides[0].background).toEqual({
+            type: 'gradient',
+            colors: ['#ff0000', '#00ff00'],
+            angle: 90
+        })
+
+        expect(presentation.slides[0].background).toEqual({
             type: 'transparent'
         })
     })
 
     it('should set slide background gradient to gradient background', () => {
         const slideId = generateId()
-        const slide: Slide = createTestSlide(slideId)
-        slide.background = {type: 'gradient', colors: ['#ffffff', '#000000'], angle: 0}
+        const presentation: Presentation = createTestPresentation([slideId])
+        presentation.slides[0].background = {
+            type: 'gradient', colors: ['#ffffff', '#000000'], angle: 45
+        }
 
-        const updatedSlide = setSlideBackgroundGradient(slide, ['#ff0000', '#00ff00'], 90)
+        const background = createBackgroundGradient(['#ff0000', '#00ff00'], 90)
+        const updatedPresentation = setBackgroundInPresentation(presentation, {
+            background: background,
+            slideId: slideId
+        })
 
-        expect(updatedSlide.background).toEqual({
-            type: 'gradient',
+        expect(updatedPresentation.slides[0].background).toEqual({
+            type: 'gradient', 
             colors: ['#ff0000', '#00ff00'],
             angle: 90
         })
 
-        expect(slide.background).toEqual({
-            type: 'gradient',
+        expect(presentation.slides[0].background).toEqual({
+            type: 'gradient', 
             colors: ['#ffffff', '#000000'],
-            angle: 0
+            angle: 45
         })
     })
 })
 
 describe('setSlideTransparentBackground', () => {
-    it('should set slide transparent', () => {
+    it('should set slide background to transparent', () => {
         const slideId = generateId()
-        const slide: Slide = createTestSlide(slideId)
-        slide.background = {type: 'solid', color: '#ffffff'}
+        const presentation: Presentation = createTestPresentation([slideId])
 
-        const updatedSlide = setSlideBackgroundTransparent(slide)
+        const background = createBackgroundTransparent()
+        const updatedPresentation = setBackgroundInPresentation(presentation, {
+            background: background,
+            slideId: slideId
+        })
 
-        expect(updatedSlide.background).toEqual({
+        expect(updatedPresentation.slides[0].background).toEqual({
             type: 'transparent'
         })
 
-        expect(slide.background).toEqual({
-            type: 'solid',
-            color: '#ffffff'
-        })
+        expect(presentation.slides[0].background).toEqual({
+            type: 'transparent'
+        })   
     })
 })
