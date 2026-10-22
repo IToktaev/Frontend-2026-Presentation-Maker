@@ -76,7 +76,9 @@ function createTestPresentation(): Presentation {
         object: textObject2
     })
 
-    presentation = addSlide(presentation, secondSlideId)
+    presentation = addSlide(
+        presentation, {currentSlideId: firstSlideId, newSlideId: secondSlideId}
+    )
 
     background = createBackgroundImage('#f0f0f0')
     presentation = setBackgroundInPresentation(
@@ -98,7 +100,9 @@ function createTestPresentation(): Presentation {
         object: imageObject
     })
 
-    presentation = addSlide(presentation, thirdSlideId)
+    presentation = addSlide(
+        presentation, {currentSlideId: secondSlideId, newSlideId: thirdSlideId}
+    )
 
     background = createBackgroundGradient(['#ff0000', '#00ff00'], 90)
     presentation = setBackgroundInPresentation(
@@ -143,7 +147,9 @@ function createTestPresentation(): Presentation {
         object: triangleObject
     })
 
-    presentation = addSlide(presentation, fourthSlideId)
+    presentation = addSlide(
+        presentation, {currentSlideId: thirdSlideId, newSlideId: fourthSlideId}
+    )
 
     background = createBackgroundTransparent()
     presentation = setBackgroundInPresentation(

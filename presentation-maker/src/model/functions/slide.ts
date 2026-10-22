@@ -1,19 +1,34 @@
 import type { Presentation } from "../types/presentation.js"
 import type { Background, Slide } from "../types/slide.js"
 
-function addSlide(presentation: Presentation, slideId: string): Presentation {
+function addSlide(
+    presentation: Presentation, 
+    params: {
+        currentSlideId?: string,
+        newSlideId: string
+    }
+): Presentation {
     const newSlide: Slide = {
-        id: slideId,
+        id: params.newSlideId,
         background: {type: 'solid', color: '#ffffff'},
         slideObjects: []
     }
 
+    const slides = [...presentation.slides]
+    const currentIndex = slides.findIndex(slide => slide.id === params.currentSlideId)
+
+    if (currentIndex === -1) {
+        return {
+            ...presentation,
+            slides: [newSlide]
+        }
+    }
+
+    slides.splice(currentIndex + 1, 0, newSlide)
+
     return {
         ...presentation,
-        slides: [
-            ...presentation.slides, 
-            newSlide
-        ]
+        slides: slides
     }
 }
 
@@ -45,13 +60,11 @@ function duplicateSlide(
     presentation: Presentation,
     params: {
         currentId: string,
-        newIds: {
-            slideId: string,
-            objectIds: string[]
-        }
+        newId: string,
+        objectIds: string[]
     }
 ): Presentation {
-    const { currentId, newIds } = params
+    const { currentId, newId, objectIds } = params
 
     const slides = [...presentation.slides]
     const slideIndex = slides.findIndex(slide => slide.id === currentId)
@@ -62,10 +75,10 @@ function duplicateSlide(
     }
 
     const newSlide: Slide = structuredClone(slide)
-    newSlide.id = newIds.slideId
+    newSlide.id = newId
 
     newSlide.slideObjects.map((object, index) => {
-        object.id = newIds.objectIds[index];
+        object.id = objectIds[index];
     })
     
     slides.splice(slideIndex + 1, 0, newSlide)

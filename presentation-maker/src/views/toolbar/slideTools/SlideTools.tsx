@@ -11,34 +11,39 @@ import { addSlide, duplicateSlide, removeSlides } from '../../../model/functions
 import { 
     getCurrentSlideId, 
     getSelectedSlideIds, 
-    setIdsAfterRemoval
+    selectNewSlide, 
+    setIdsBeforeRemoval
 } from '../../../viewModel/viewModel'
 import { Palette } from '../../palette/Palette'
 
-function handleAddSlide() {
-    const slideId = generateId()
+function handleAddSlide(event: React.MouseEvent) {
+    const newId = generateId()
+    const currentId = getCurrentSlideId()!
 
-    dispatch(addSlide, slideId)
+    dispatch(addSlide, {currentSlideId: currentId, newSlideId: newId})
+    selectNewSlide(newId, event.ctrlKey)
 }
 
-function handleDuplicateSlide() {
-    const duplicatedId = generateId()
+function handleDuplicateSlide(event: React.MouseEvent) {
+    const newId = generateId()
     const currentId = getCurrentSlideId()!
 
     const slide = getState()?.slides.find(slide => slide.id === currentId)
-    const newObjectIds = generateIds(slide?.slideObjects.length!)
+    const objectIds = generateIds(slide?.slideObjects.length!)
 
-    dispatch(
-        duplicateSlide, 
-        {currentId, newIds: {slideId: duplicatedId, objectIds: newObjectIds}}
-    )
+    dispatch(duplicateSlide, {
+        currentId,
+        newId,
+        objectIds,
+    })
+    selectNewSlide(newId, event.ctrlKey)
 }
 
 function handleRemoveSlides() {
     const slideIds = getSelectedSlideIds()
 
+    setIdsBeforeRemoval()
     dispatch(removeSlides, slideIds)
-    setIdsAfterRemoval()
 }
 
 function SlideTools() {

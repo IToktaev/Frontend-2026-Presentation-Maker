@@ -1,16 +1,22 @@
 import { getState } from "../model/editor"
 
-let currentSlideId: string | null = null
-let selectedSlideIds: string[] = []
-let viewModelChangeHandler: (() => void) | null = null
+type ViewModel = {
+    selectedSlideIds: string[],
+    isPreviewMode: boolean
+}
 
-let isPreviewMode = false;
+let viewModel: ViewModel | null = null
+let viewModelChangeHandler: (() => void) | null
 
 function addViewModelChangeHandler(handler: () => void): void {
     viewModelChangeHandler = handler
 }
 
-function isSlideSuitable(id: string, selectFromSelected: boolean): boolean {
+function isSlideSuitable(
+    selectedSlideIds: string[], 
+    id: string, 
+    selectFromSelected: boolean
+): boolean {
     if (selectFromSelected) {
         return selectedSlideIds.includes(id)
     }
@@ -18,106 +24,157 @@ function isSlideSuitable(id: string, selectFromSelected: boolean): boolean {
     return !selectedSlideIds.includes(id)
 }
 
-function changeCurrentSlideId(selectFromSelected: boolean): string | null {
+function changeCurrentSlideId(
+    selectedSlideIds: string[], 
+    selectFromSelected: boolean
+): string | null {
     const slideIds = getState()?.slides.map(slide => slide.id) ?? []
+    const currentSlideId = getCurrentSlideId()
 
-    if (slideIds.length === 0) {
-        return null;
+    if (slideIds.length === 0 || currentSlideId === null) {
+        return null
     }
 
-    const currentIndex = slideIds.indexOf(currentSlideId!)
+    const currentIndex = slideIds.indexOf(currentSlideId)
 
+    if (currentIndex === -1) {
+        return slideIds.find(
+            id => isSlideSuitable(selectedSlideIds, id, selectFromSelected)
+        ) ?? null
+    }
 
     for (let i = currentIndex - 1; i >= 0; i--) {
-    if (isSlideSuitable(slideIds[i], selectFromSelected)) {
-            return slideIds[i];
+        if (isSlideSuitable(selectedSlideIds, slideIds[i], selectFromSelected)) {
+            return slideIds[i]
         }
     }
 
     for (let i = currentIndex + 1; i < slideIds.length; i++) {
-        if (isSlideSuitable(slideIds[i], selectFromSelected)) {
-            return slideIds[i];
+        if (isSlideSuitable(selectedSlideIds, slideIds[i], selectFromSelected)) {
+            return slideIds[i]
         }
     }
 
-    return null;
+    return null
 }
 
 function initializeViewModel(): void {
     const slides = getState()?.slides ?? []
+    const selectedSlideIds = []
 
-    currentSlideId = slides[0]?.id ?? null
-    selectedSlideIds = currentSlideId ? [currentSlideId] : []
+    if (slides.length > 0) {
+        selectedSlideIds.push(slides[0].id)
+    }
+
+    viewModel = {
+        selectedSlideIds: selectedSlideIds,
+        isPreviewMode: false
+    }
 }
 
 function getCurrentSlideId(): string | null {
-    return currentSlideId
+    return viewModel?.selectedSlideIds[0] ?? null
 }
 
 function getSelectedSlideIds(): string[] {
-    return [...selectedSlideIds]
+    if (!viewModel) {
+        return []
+    }
+
+    return [...viewModel.selectedSlideIds]
 }
 
 function selectNewSlide(newId: string, ctrl: boolean): void {
-    if (!ctrl) {
-        currentSlideId = newId;
-        selectedSlideIds = [newId]
-    } else {
-        if (newId === currentSlideId) {
-            if (selectedSlideIds.length !== 1) {
-                const currentIndex = selectedSlideIds.indexOf(currentSlideId)
-                selectedSlideIds.splice(currentIndex, 1)
-                currentSlideId = changeCurrentSlideId(true)
-            }
-        } else if (selectedSlideIds.includes(newId)) {
-            const newIndex = selectedSlideIds.indexOf(newId)
-            selectedSlideIds.splice(newIndex, 1)
-        } else {
-            currentSlideId = newId
-            selectedSlideIds.push(newId)
-        }
-    }
-
-    if (viewModelChangeHandler) {
-        viewModelChangeHandler()
-    }
-}
-
-function setIdsAfterRemoval() {
-    currentSlideId = changeCurrentSlideId(false);
-    selectedSlideIds = currentSlideId ? [currentSlideId] : [];
-
-    if (viewModelChangeHandler) {
-        viewModelChangeHandler()
-    }
-}
-
-function setPreviewMode(mode: boolean): void {
-    selectedSlideIds = currentSlideId ? [currentSlideId] : []
-
-    isPreviewMode = mode;
-    if (viewModelChangeHandler) {
-        viewModelChangeHandler();
-    }
-}
-
-function getPreviewMode(): boolean {
-  return isPreviewMode;
-}
-
-function switchSlide(direction: -1 | 1) {
-    const slides = getState()?.slides
-    const currentIndex = slides?.findIndex(slide => slide.id == currentSlideId)
-
-    if (currentIndex == undefined || !slides) {
+    if (!viewModel) {
         return
     }
 
-    currentSlideId = slides[currentIndex + direction].id
+    const selectedIds = viewModel.selectedSlideIds
 
-    if (viewModelChangeHandler) {
-        viewModelChangeHandler()
+    if (!ctrl) {
+        viewModel.selectedSlideIds = [newId]
+    } else {
+        const currentSlideId = getCurrentSlideId()
+
+        if (newId === currentSlideId) {
+            if (viewModel.selectedSlideIds.length !== 1) {
+                const nextCurrentSlideId = changeCurrentSlideId(selectedIds, true)
+
+                viewModel.selectedSlideIds = selectedIds.filter(id => id !== currentSlideId)
+
+                if (nextCurrentSlideId) {
+                    viewModel.selectedSlideIds = [
+                        nextCurrentSlideId,
+                        ...selectedIds.filter(id => id !== nextCurrentSlideId),
+                    ]
+                }
+            }
+        } else if (selectedIds.includes(newId)) {
+            viewModel.selectedSlideIds = selectedIds.filter(id => id !== newId)
+        } else {
+            viewModel.selectedSlideIds = [
+                newId,
+                ...selectedIds,
+            ]
+        }
     }
+
+    viewModelChangeHandler?.()
+}
+
+function setIdsBeforeRemoval(): void {
+    if (!viewModel) {
+        return
+    }
+
+    const nextCurrentSlideId = changeCurrentSlideId(viewModel.selectedSlideIds, false)
+
+    viewModel.selectedSlideIds = nextCurrentSlideId ? [nextCurrentSlideId] : []
+    viewModelChangeHandler?.()
+}
+
+function setPreviewMode(mode: boolean): void {
+    if (!viewModel) {
+        return
+    }
+
+    if (mode) {
+        viewModel.selectedSlideIds = viewModel.selectedSlideIds.slice(0, 1)
+    }
+
+    viewModel.isPreviewMode = mode
+    viewModelChangeHandler?.()
+}
+
+function getPreviewMode(): boolean {
+    return viewModel?.isPreviewMode ?? false
+}
+
+function switchSlide(direction: -1 | 1): void {
+    if (!viewModel) {
+        return
+    }
+
+    const slides = getState()?.slides ?? []
+    const currentSlideId = viewModel?.selectedSlideIds[0]
+
+    const currentIndex = slides.findIndex(
+        slide => slide.id === currentSlideId
+    )
+
+    if (currentIndex === -1) {
+        return
+    }
+
+    const nextIndex = currentIndex + direction
+
+    if (nextIndex < 0 || nextIndex >= slides.length) {
+        return
+    }
+
+    viewModel.selectedSlideIds = [slides[nextIndex].id]
+
+    viewModelChangeHandler?.()
 }
 
 export {
@@ -125,11 +182,11 @@ export {
     getCurrentSlideId,
     getSelectedSlideIds,
     selectNewSlide,
-    setIdsAfterRemoval,
+    setIdsBeforeRemoval,
     addViewModelChangeHandler,
     setPreviewMode,
     getPreviewMode,
     switchSlide
 }
 
-//нужно добавить типы данных, покрыть тестами и избавиться от двойственности selectedSlideId и currentSlideId
+// покрыть тестами и избавиться от двойственности selectedSlideId и currentSlideId

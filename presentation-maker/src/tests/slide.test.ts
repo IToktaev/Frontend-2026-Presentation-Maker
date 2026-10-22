@@ -35,7 +35,7 @@ describe('addSlide', () => {
         const presentation: Presentation = createTestPresentation([])
         const slideId = generateId()
 
-        const presentationWithNewSlide = addSlide(presentation, slideId)
+        const presentationWithNewSlide = addSlide(presentation, {newSlideId: slideId})
 
         expect(presentationWithNewSlide.slides.length).toBe(1)
 
@@ -43,10 +43,12 @@ describe('addSlide', () => {
     }) 
 
     it('should add slide to not empty slidelist', () => {
-        const [slideId, presentationId] = generateIds(2);
-        const presentation: Presentation = createTestPresentation([presentationId])
+        const [slideId, defaultSlideId] = generateIds(2);
+        const presentation: Presentation = createTestPresentation([defaultSlideId])
 
-        const presentationWithNewSlide = addSlide(presentation, slideId)
+        const presentationWithNewSlide = addSlide(
+            presentation, {currentSlideId: defaultSlideId, newSlideId: slideId}
+        )
 
         expect(presentationWithNewSlide.slides.length).toBe(2)
 
@@ -255,9 +257,12 @@ describe('duplicateSlide', () => {
         }
 
         const newObjectIds = currentSlide.slideObjects.map(() => generateId())
-        const newIds = {slideId: newSlideId, objectIds: newObjectIds}
 
-        const updatedPresentation = duplicateSlide(presentation, firstSlideId, newIds)
+        const updatedPresentation = duplicateSlide(presentation, {
+            currentId: firstSlideId,
+            newId: newSlideId,
+            objectIds: newObjectIds,
+        })
 
         expect(updatedPresentation.slides.map(slide => slide.id)).toEqual([
             firstSlideId,
@@ -274,9 +279,13 @@ describe('duplicateSlide', () => {
         const unexistingSlideId = generateId()
         const presentation: Presentation = createTestPresentation([])
         const newObjectIds: string[] = []
-        const newIds = {slideId: unexistingSlideId, objectIds: newObjectIds}
+        const newSlideId = generateId()
 
-        const updatedPresentation = duplicateSlide(presentation, unexistingSlideId, newIds)
+        const updatedPresentation = duplicateSlide(presentation, {
+            currentId: unexistingSlideId,
+            newId: newSlideId,
+            objectIds: newObjectIds
+})
 
         expect(updatedPresentation.slides.map(slide => slide.id)).toEqual([])
 
