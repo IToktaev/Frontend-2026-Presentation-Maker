@@ -3,15 +3,17 @@ import type { CircleObject } from "../../../model/types/objects";
 function Circle(object: CircleObject, scale: number) {
     return (
         <svg
-            width="100%"
-            height="100%"
+            width={object.size.width * scale}
+            height={object.size.height * scale}
             style={{
-                position: 'absolute',    
+                position: 'absolute',
+                left: object.position.x * scale,
+                top: object.position.y * scale,
             }}
         >
             <circle
-                cx={(object.position.x + object.size.width / 2) * scale}
-                cy={(object.position.y + object.size.height / 2) * scale}
+                cx={object.size.width * scale / 2}
+                cy={object.size.height * scale / 2}
                 r={Math.min(object.size.width, object.size.height) * scale / 2}
                 fill={object.color}
             />
@@ -19,6 +21,6 @@ function Circle(object: CircleObject, scale: number) {
     )
 }
 
-export {
-    Circle
+export { 
+    Circle 
 }

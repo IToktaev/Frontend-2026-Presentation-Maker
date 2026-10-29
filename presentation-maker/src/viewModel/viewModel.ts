@@ -2,6 +2,7 @@ import { getState } from "../model/editor"
 
 type ViewModel = {
     selectedSlideIds: string[],
+    selectedObjectIds: string[]
     isPreviewMode: boolean
 }
 
@@ -68,6 +69,7 @@ function initializeViewModel(): void {
 
     viewModel = {
         selectedSlideIds: selectedSlideIds,
+        selectedObjectIds: [],
         isPreviewMode: false
     }
 }
@@ -84,11 +86,50 @@ function getSelectedSlideIds(): string[] {
     return [...viewModel.selectedSlideIds]
 }
 
-function selectNewSlide(newId: string, ctrl: boolean): void {
+function getSelectedObjectIds(): string[] {
+    if (!viewModel) {
+        return []
+    }
+
+    return [...viewModel.selectedObjectIds]
+}
+
+function selectNewObject(newId: string, ctrl: boolean) {
     if (!viewModel) {
         return
     }
 
+    const selectedObjectIds = viewModel.selectedObjectIds
+
+    if (!ctrl) {
+        viewModel.selectedObjectIds = [newId]
+    } else {
+        if (selectedObjectIds.includes(newId)) {
+            viewModel.selectedObjectIds = selectedObjectIds.filter(id => id !== newId)
+        } else {
+            viewModel.selectedObjectIds = [
+                ...selectedObjectIds,
+                newId
+            ]
+        }
+    }
+
+    viewModelChangeHandler?.()
+}
+
+function deselectObjects(): void {
+    if (!viewModel) {
+        return
+    }
+
+    viewModel.selectedObjectIds = []
+}
+
+function selectNewSlide(newId: string, ctrl: boolean): void {
+    if (!viewModel) {
+        return
+    }
+    deselectObjects()
     const selectedIds = viewModel.selectedSlideIds
 
     if (!ctrl) {
@@ -127,6 +168,7 @@ function setIdsBeforeRemoval(): void {
         return
     }
 
+    deselectObjects()
     const nextCurrentSlideId = changeCurrentSlideId(viewModel.selectedSlideIds, false)
 
     viewModel.selectedSlideIds = nextCurrentSlideId ? [nextCurrentSlideId] : []
@@ -173,7 +215,6 @@ function switchSlide(direction: -1 | 1): void {
     }
 
     viewModel.selectedSlideIds = [slides[nextIndex].id]
-
     viewModelChangeHandler?.()
 }
 
@@ -186,7 +227,8 @@ export {
     addViewModelChangeHandler,
     setPreviewMode,
     getPreviewMode,
-    switchSlide
+    switchSlide,
+    selectNewObject,
+    deselectObjects,
+    getSelectedObjectIds
 }
-
-// покрыть тестами и избавиться от двойственности selectedSlideId и currentSlideId

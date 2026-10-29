@@ -2,7 +2,7 @@ import { Button } from '../../components/button/Button'
 import { TextInput } from '../../components/textInput/TextInput'
 import { SlideTools } from './slideTools/SlideTools'
 import { Tools } from './tools/Tools'
-import styles from './toolbar.module.css'
+import styles from './Toolbar.module.css'
 
 import SlideShowImage from '../../assets/slide-show.png'
 import MicrophoneImage from '../../assets/micro.png'

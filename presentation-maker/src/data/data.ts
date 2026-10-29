@@ -4,15 +4,13 @@ import {
     createCircle, 
     createImage, 
     createRectangle, 
-    createText, 
-    createTriangle 
+    createText
 } from "../model/functions/objects";
 import { createPresentation } from "../model/functions/presentation";
 import { 
     addSlide, 
     createBackgroundColor, 
     createBackgroundGradient, 
-    createBackgroundImage, 
     createBackgroundTransparent, 
     setBackgroundInPresentation, 
 } from "../model/functions/slide";
@@ -45,12 +43,12 @@ function createTestPresentation(): Presentation {
         fontFamily: 'Arial', 
         fontSize: 40, 
         fontStyle: 'italic',
-        fontWeight: 'normal',
+        fontWeight: 'normal',   
         textDecoration: 'none',
         text: 'Добро пожаловать!',
         color: '#ff0000',
-        position: {x: 0, y: 0},
-        size: {width: 100, height: 50},
+        position: {x: 100, y: 100},
+        size: {width: 300, height: 100},
     }, generateId())
 
     let textObject2: SlideObject = createText({
@@ -62,7 +60,7 @@ function createTestPresentation(): Presentation {
         text: 'Лабораторная работа #2',
         color: '#000000',
         position: {x: 500, y: 500},
-        size: {width: 100, height: 50}
+        size: {width: 300, height: 200}
     }, generateId())
 
 
@@ -80,7 +78,7 @@ function createTestPresentation(): Presentation {
         presentation, {currentSlideId: firstSlideId, newSlideId: secondSlideId}
     )
 
-    background = createBackgroundImage('#f0f0f0')
+    background = createBackgroundColor('#f0f0f0')
     presentation = setBackgroundInPresentation(
         presentation, 
         {
@@ -116,22 +114,13 @@ function createTestPresentation(): Presentation {
     let circleObject: SlideObject = createCircle({
         color: '#ff0000',
         position: {x: 100, y: 200},
-        size: {width: 1000, height: 500},
+        size: {width: 500, height: 500},
     }, generateId())
 
     let rectangleObject: SlideObject = createRectangle({
         color: '#00ff00',
         position: {x: 100, y: 200},
-        size: {width: 200, height: 1000},
-    }, generateId())
-
-    let triangleObject: SlideObject = createTriangle({
-        color: '#0000ff',
-        position: {x: 100, y: 200},
-        size: {width: 500, height: 300},
-        point1: {x: 0, y: 0},
-        point2: {x: 10, y: 100},
-        point3: {x: 800, y: 200},
+        size: {width: 200, height: 400},
     }, generateId())
 
     presentation = addObjectToPresentation(presentation, {
@@ -141,10 +130,6 @@ function createTestPresentation(): Presentation {
     presentation = addObjectToPresentation(presentation, {
         slideId: thirdSlideId,
         object: rectangleObject
-    })
-    presentation = addObjectToPresentation(presentation, {
-        slideId: thirdSlideId,
-        object: triangleObject
     })
 
     presentation = addSlide(

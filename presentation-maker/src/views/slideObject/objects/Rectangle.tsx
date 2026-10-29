@@ -3,15 +3,17 @@ import type { RectangleObject } from "../../../model/types/objects";
 function Rectangle(object: RectangleObject, scale: number) {
     return (
         <svg
-            width="100%"
-            height="100%"
+            width={object.size.width * scale}
+            height={object.size.height * scale}
             style={{
-                position: 'absolute'
+                position: 'absolute',
+                left: object.position.x * scale,
+                top: object.position.y * scale,
             }}
         >
             <rect
-                x={object.position.x * scale}
-                y={object.position.y * scale}
+                x={0}
+                y={0}
                 width={object.size.width * scale}
                 height={object.size.height * scale}
                 fill={object.color}
@@ -20,6 +22,6 @@ function Rectangle(object: RectangleObject, scale: number) {
     )
 }
 
-export {
-    Rectangle
+export { 
+    Rectangle 
 }

@@ -1,16 +1,45 @@
+import { useEffect } from 'react'
 import styles from './App.module.css'
 import type { Presentation } from './model/types/presentation'
-import { getPreviewMode, setPreviewMode } from './viewModel/viewModel'
+import { deselectObjects, getCurrentSlideId, getPreviewMode, getSelectedObjectIds, getSelectedSlideIds, setPreviewMode } from './viewModel/viewModel'
 import { PreviewOverlay } from './views/previewOverlay/PreviewOverlay'
 import { SlideList } from './views/slidelist/SlideList'
 import { Toolbar } from './views/toolbar/Toolbar'
 import { Workspace } from './views/workspace/Workspace'
+import { removeObjectsFromPresentation } from './model/functions/objects'
+import { dispatch } from './model/editor'
+import { removeSlides } from './model/functions/slide'
 
 type AppProps = {
     presentation: Presentation
 }
 
 function App({presentation}: AppProps) {
+    const selectedObjectIds = getSelectedObjectIds()
+    const currentSlideId = getCurrentSlideId()
+
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+        if (event.key === 'Delete') {
+            if (selectedObjectIds.length !== 0) {
+                deselectObjects()
+                dispatch(removeObjectsFromPresentation, {
+                    slideId: currentSlideId,
+                    selectedObjectIds: selectedObjectIds
+                })
+            } else {
+                dispatch(removeSlides, getSelectedSlideIds())
+            }
+        }
+    }
+
+        document.addEventListener('keydown', handleKeyDown)
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown)
+        }
+    }, [selectedObjectIds, currentSlideId])
+
   if (!getPreviewMode()) {
     return (
       <div className={styles.page}>

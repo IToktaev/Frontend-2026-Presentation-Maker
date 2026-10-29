@@ -5,7 +5,7 @@ import TextIcon from '../../../assets/text-icon.png'
 import ImageIcon from '../../../assets/image-icon.png'
 import FigureIcon from '../../../assets/figure-icon.png'
 
-import styles from './tools.module.css'
+import styles from './Tools.module.css'
 import { Palette } from "../../palette/Palette";
 
 

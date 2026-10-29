@@ -5,6 +5,7 @@ import { Circle } from "./objects/Circle"
 import { Rectangle } from "./objects/Rectangle"
 import { Triangle } from "./objects/Triangle"
 import type { CircleObject, RectangleObject, TriangleObject } from "../../model/types/objects"
+import { selectNewObject } from "../../viewModel/viewModel"
 
 type ObjectProps = {
     object: Slide['slideObjects'][number];
@@ -12,28 +13,26 @@ type ObjectProps = {
 };
 
 function SlideObject({ object, scale }: ObjectProps) {
+    let content
+
     if (object.type === 'text') {
-        return Text(object, scale)
-    }
-
-    if (object.type === 'image') {
-        return Image(object, scale)
-    }
-
-    if (object.type === 'figure') {
+        content = Text(object, scale)
+    } else if (object.type === 'image') {
+        content = Image(object, scale)
+    } else if (object.type === 'figure') {
         if (object.figureType === 'circle') {
-            return Circle(object as CircleObject, scale)
-        }
-        if (object.figureType === 'rectangle') {
-            return Rectangle(object as RectangleObject, scale)
-        }
-        if (object.figureType === 'triangle') {
-            return Triangle(object as TriangleObject, scale)
+            content = Circle(object as CircleObject, scale)
+        } else if (object.figureType === 'rectangle') {
+            content = Rectangle(object as RectangleObject, scale)
+        } else if (object.figureType === 'triangle') {
+            content = Triangle(object as TriangleObject, scale)
         }
     }
 
     return (
-        <></>
+        <div onClick={(event) => selectNewObject(object.id, event.ctrlKey)}>
+            {content}
+        </div>
     )
 }
 

@@ -118,15 +118,19 @@ function createTriangle(data: TriangleData, objectId: string): TriangleObject {
 }
 
 function removeObjectsFromPresentation(presentation: Presentation, params: {
-    slideId: string,
+    slideId: string | null,
     selectedObjectIds: string[]
 }) {
+    if (!params.slideId) {
+        return presentation
+    }
+
     const slides = presentation.slides.map(slide => {
         if (slide.id !== params.slideId) {
             return slide
         }
 
-        slide = removeObjects(slide, params.selectedObjectIds)
+        return removeObjects(slide, params.selectedObjectIds)
     })
     
     return {

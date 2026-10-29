@@ -1,4 +1,4 @@
-import styles from './slideTools.module.css'
+import styles from './SlideTools.module.css'
 
 import AddIcon from '../../../assets/add-slide-icon.png'
 import DuplicateIcon from '../../../assets/duplicate-slide.png'
@@ -50,7 +50,7 @@ function SlideTools() {
     const isBackgroundDisplayVisible = false;
     const isGradient = false;
 
-    return(
+    return(  
        <div className ={styles.toolArea}>
            <h3 className={styles.toolName}>Слайд</h3>
                 

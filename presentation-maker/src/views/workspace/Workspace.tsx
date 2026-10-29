@@ -14,7 +14,7 @@ function Workspace({slides}: WorkSpaceProps) {
 
     return(
         <div className={styles.workspace}>
-            <Slide scale = {1} slide={slide}/>
+            <Slide type="workspace" slide={slide}/>
         </div>
     )
 }
