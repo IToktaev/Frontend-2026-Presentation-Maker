@@ -1,5 +1,5 @@
 import type { Slide as SlideData } from '../../model/types/slide'
-import { getSelectedSlideIds, selectNewSlide } from '../../viewModel/viewModel'
+import { getSelectedSlideIds, selectSlide } from '../../viewModel/viewModel'
 import { Slide } from '../slide/Slide'
 import styles from './slideList.module.css'
 
@@ -8,7 +8,7 @@ type WorkSpaceProps = {
 }
 
 function handleSlideClick(slideId: string, ctrlKey: boolean) {
-    selectNewSlide(slideId, ctrlKey)
+    selectSlide(slideId, ctrlKey)
 }
 
 function SlideList({slides}: WorkSpaceProps) {

@@ -5,7 +5,7 @@ import { Circle } from "./objects/Circle"
 import { Rectangle } from "./objects/Rectangle"
 import { Triangle } from "./objects/Triangle"
 import type { CircleObject, RectangleObject, TriangleObject } from "../../model/types/objects"
-import { selectNewObject } from "../../viewModel/viewModel"
+import { selectObject } from "../../viewModel/viewModel"
 
 type ObjectProps = {
     object: Slide['slideObjects'][number];
@@ -30,7 +30,7 @@ function SlideObject({ object, scale }: ObjectProps) {
     }
 
     return (
-        <div onClick={(event) => selectNewObject(object.id, event.ctrlKey)}>
+        <div onClick={(event) => selectObject(object.id, event.ctrlKey)}>
             {content}
         </div>
     )

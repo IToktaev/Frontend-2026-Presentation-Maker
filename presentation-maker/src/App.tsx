@@ -1,44 +1,18 @@
-import { useEffect } from 'react'
 import styles from './App.module.css'
+import { useKeyBoard } from './hooks/useKeyBoard'
 import type { Presentation } from './model/types/presentation'
-import { deselectObjects, getCurrentSlideId, getPreviewMode, getSelectedObjectIds, getSelectedSlideIds, setPreviewMode } from './viewModel/viewModel'
+import { getPreviewMode, setPreviewMode } from './viewModel/viewModel'
 import { PreviewOverlay } from './views/previewOverlay/PreviewOverlay'
 import { SlideList } from './views/slidelist/SlideList'
 import { Toolbar } from './views/toolbar/Toolbar'
 import { Workspace } from './views/workspace/Workspace'
-import { removeObjectsFromPresentation } from './model/functions/objects'
-import { dispatch } from './model/editor'
-import { removeSlides } from './model/functions/slide'
 
 type AppProps = {
     presentation: Presentation
 }
 
 function App({presentation}: AppProps) {
-    const selectedObjectIds = getSelectedObjectIds()
-    const currentSlideId = getCurrentSlideId()
-
-    useEffect(() => {
-        const handleKeyDown = (event: KeyboardEvent) => {
-        if (event.key === 'Delete') {
-            if (selectedObjectIds.length !== 0) {
-                deselectObjects()
-                dispatch(removeObjectsFromPresentation, {
-                    slideId: currentSlideId,
-                    selectedObjectIds: selectedObjectIds
-                })
-            } else {
-                dispatch(removeSlides, getSelectedSlideIds())
-            }
-        }
-    }
-
-        document.addEventListener('keydown', handleKeyDown)
-
-        return () => {
-            document.removeEventListener('keydown', handleKeyDown)
-        }
-    }, [selectedObjectIds, currentSlideId])
+  useKeyBoard()
 
   if (!getPreviewMode()) {
     return (
@@ -62,9 +36,5 @@ function App({presentation}: AppProps) {
 
 export default App
 
-//что такое jsx?
-//сделать Preview overlay
-//исправить баг с кривым отображением палитры
-//вынести рендер объекта в отдельный компонент
-
-//поменять везде 1 букву
+//кастомный хук
+//сброс всех выделенных при клике мимо

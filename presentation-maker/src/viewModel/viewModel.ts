@@ -94,7 +94,7 @@ function getSelectedObjectIds(): string[] {
     return [...viewModel.selectedObjectIds]
 }
 
-function selectNewObject(newId: string, ctrl: boolean) {
+function selectObject(newId: string, ctrl: boolean) {
     if (!viewModel) {
         return
     }
@@ -123,9 +123,10 @@ function deselectObjects(): void {
     }
 
     viewModel.selectedObjectIds = []
+    viewModelChangeHandler?.()
 }
 
-function selectNewSlide(newId: string, ctrl: boolean): void {
+function selectSlide(newId: string, ctrl: boolean): void {
     if (!viewModel) {
         return
     }
@@ -222,13 +223,13 @@ export {
     initializeViewModel,
     getCurrentSlideId,
     getSelectedSlideIds,
-    selectNewSlide,
+    selectSlide,
     setIdsBeforeRemoval,
     addViewModelChangeHandler,
     setPreviewMode,
     getPreviewMode,
     switchSlide,
-    selectNewObject,
+    selectObject,
     deselectObjects,
     getSelectedObjectIds
 }

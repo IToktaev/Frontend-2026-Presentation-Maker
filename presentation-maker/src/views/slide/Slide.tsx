@@ -1,8 +1,9 @@
 import type { Slide as SlideData} from '../../model/types/slide'
 import styles from './Slide.module.css'
 import { SlideObject } from '../slideObject/SlideObject'
-import { getSelectedObjectIds } from '../../viewModel/viewModel'
+import { deselectObjects, getSelectedObjectIds } from '../../viewModel/viewModel'
 import type { SlideObject as ObjectType } from '../../model/types/objects'
+import type React from 'react'
 
 type SlideType = 'workspace' | 'slidelist' | 'preview'
 
@@ -76,6 +77,12 @@ function Slide({type, slide}: SlideProps) {
             ...selectedObjects.map(object => object.position.y + object.size.height)
         )
 
+        const handleClick = (event: React.MouseEvent) => {
+            if (event.target === event.currentTarget) {
+                deselectObjects()
+            }
+        }
+
         return(
             <div 
                 className={styles.content}
@@ -84,6 +91,7 @@ function Slide({type, slide}: SlideProps) {
                     height: height * scale,
                     ...background
                 }}
+                onClick={(event) => handleClick(event)}
             >
                 {selectedObjects.length > 0 && type === 'workspace' &&
                     <div 

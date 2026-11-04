@@ -11,7 +11,7 @@ import { addSlide, duplicateSlide, removeSlides } from '../../../model/functions
 import { 
     getCurrentSlideId, 
     getSelectedSlideIds, 
-    selectNewSlide, 
+    selectSlide, 
     setIdsBeforeRemoval
 } from '../../../viewModel/viewModel'
 import { Palette } from '../../palette/Palette'
@@ -21,7 +21,7 @@ function handleAddSlide(event: React.MouseEvent) {
     const currentId = getCurrentSlideId()!
 
     dispatch(addSlide, {currentSlideId: currentId, newSlideId: newId})
-    selectNewSlide(newId, event.ctrlKey)
+    selectSlide(newId, event.ctrlKey)
 }
 
 function handleDuplicateSlide(event: React.MouseEvent) {
@@ -36,7 +36,7 @@ function handleDuplicateSlide(event: React.MouseEvent) {
         newId,
         objectIds,
     })
-    selectNewSlide(newId, event.ctrlKey)
+    selectSlide(newId, event.ctrlKey)
 }
 
 function handleRemoveSlides() {
