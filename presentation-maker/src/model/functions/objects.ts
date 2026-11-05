@@ -148,9 +148,9 @@ function removeObjects(slide: Slide, selectedObjectIds: string[]): Slide {
     }
 }
 
-function updateObjectInPresentation(presentation: Presentation, params: {
+function updateObjectsInPresentation(presentation: Presentation, params: {
     slideId: string,
-    objectId: string,
+    objectIds: string[],
     update: (object: SlideObject) => SlideObject
 }): Presentation {
     return {
@@ -160,7 +160,16 @@ function updateObjectInPresentation(presentation: Presentation, params: {
                 return slide
             }
 
-            return updateObject(slide, params.objectId, params.update)
+            return {
+                ...slide,
+                slideObjects: slide.slideObjects.map(object => {
+                    if (params.objectIds.includes(object.id)) {
+                        return params.update(object)
+                    } else {
+                        return object
+                    }
+                })
+            }
         })
     }
 }
@@ -283,7 +292,7 @@ function updateFontFamily(slide: Slide, objectId: string, newFontFamily: string)
 export {
     addSlideObject,
     addObjectToPresentation,
-    updateObjectInPresentation,
+    updateObjectsInPresentation,
     removeObjectsFromPresentation,
     createCircle,
     createRectangle,

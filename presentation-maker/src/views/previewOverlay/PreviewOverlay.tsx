@@ -44,7 +44,7 @@ function PreviewOverlay({slides, onClose}: PreviewProps) {
                 <img src={Cross} />
             </Button>
             <Slide 
-                type='preview'
+                scale={1.2}
                 slide={slide}
             />
             <div className={styles.switchPanel}>

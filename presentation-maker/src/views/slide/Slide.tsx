@@ -1,22 +1,15 @@
 import type { Slide as SlideData} from '../../model/types/slide'
 import styles from './Slide.module.css'
 import { SlideObject } from '../slideObject/SlideObject'
-import { deselectObjects, getSelectedObjectIds } from '../../viewModel/viewModel'
-import type { SlideObject as ObjectType } from '../../model/types/objects'
 import type React from 'react'
 
-type SlideType = 'workspace' | 'slidelist' | 'preview'
-
 type SlideProps = {
-    type: SlideType,
-    slide: SlideData
+    scale: number,
+    slide: SlideData,
+    onObjectClick?: (event: React.MouseEvent) => void
+    children?: React.ReactNode,
+    contentRef?: React.RefObject<HTMLDivElement | null>
 }
-
-const WORKSPACE_SCALE = 1
-const SLIDELIST_SCALE = 0.2
-const PREVIEW_SCALE = 1.2
-
-const OFFSET = 5
 
 function getBackgroundStyle(background: SlideData['background']) {
     if (background.type === 'solid') {
@@ -49,63 +42,25 @@ function getBackgroundStyle(background: SlideData['background']) {
     }
 }
 
-function Slide({type, slide}: SlideProps) {
+function Slide({scale, slide, onObjectClick, contentRef, children}: SlideProps) {
     const width = 1700
     const height = 880
-
-    const selectedObjectIds = getSelectedObjectIds()
-
-    let scale = 1
-    switch (type) {
-        case 'preview': scale = PREVIEW_SCALE; break
-        case 'slidelist': scale = SLIDELIST_SCALE; break
-        case 'workspace': scale = WORKSPACE_SCALE
-    }
 
     if (slide) {
         const background = getBackgroundStyle(slide.background)
 
-        const selectedObjects: ObjectType[] = slide.slideObjects
-            .filter(object => selectedObjectIds.includes(object.id))
-
-        const minX = Math.min(...selectedObjects.map(object => object.position.x))
-        const maxX = Math.max(
-            ...selectedObjects.map(object => object.position.x + object.size.width)
-        )
-        const minY = Math.min(...selectedObjects.map(object => object.position.y))
-        const maxY = Math.max(
-            ...selectedObjects.map(object => object.position.y + object.size.height)
-        )
-
-        const handleClick = (event: React.MouseEvent) => {
-            if (event.target === event.currentTarget) {
-                deselectObjects()
-            }
-        }
-
         return(
             <div 
+                ref={contentRef}
                 className={styles.content}
                 style={{
                     width: width * scale,
                     height: height * scale,
                     ...background
                 }}
-                onClick={(event) => handleClick(event)}
+                onClick={(event) => onObjectClick?.(event)}
             >
-                {selectedObjects.length > 0 && type === 'workspace' &&
-                    <div 
-                        className={styles.selectedArea}
-                        style={{
-                            position: 'absolute',
-                            left: minX * scale - OFFSET,
-                            top: minY * scale - OFFSET,
-                            width: (maxX - minX) * scale + OFFSET,
-                            height: (maxY - minY) * scale + OFFSET
-                        }}
-                    >
-                    </div>
-                }
+                {children}
 
                 {slide.slideObjects.map(object => (
                     <SlideObject 

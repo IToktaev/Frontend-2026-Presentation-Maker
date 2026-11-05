@@ -4,4 +4,13 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    user-select: none;
+}
+
+.selectedArea {
+    border: 5px solid red;
+    box-sizing: border-box;
+    z-index: 1;
+    border-radius: 5px;
+    pointer-events: none;
 }

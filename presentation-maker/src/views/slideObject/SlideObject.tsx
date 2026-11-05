@@ -30,7 +30,7 @@ function SlideObject({ object, scale }: ObjectProps) {
     }
 
     return (
-        <div onClick={(event) => selectObject(object.id, event.ctrlKey)}>
+        <div onMouseDown={(event) => selectObject(object.id, event.ctrlKey)}>
             {content}
         </div>
     )

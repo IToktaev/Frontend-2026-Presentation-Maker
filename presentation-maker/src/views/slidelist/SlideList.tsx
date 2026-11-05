@@ -28,7 +28,7 @@ function SlideList({slides}: WorkSpaceProps) {
                         }
                     >
                         <Slide
-                            type="slidelist"
+                            scale={0.2}
                             slide={slide}
                         />
                     </div>
