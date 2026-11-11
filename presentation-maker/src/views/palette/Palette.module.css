@@ -1,4 +1,11 @@
 .palette {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.paletteMain {
     width: 100%;
     padding: 0 20px;
     box-sizing: border-box;
@@ -9,11 +16,18 @@
     gap: 20px;
 }
 
+.colorPicker {
+    width: 200px;
+    height: 50px;
+    border-radius: 5px;
+}
+
 .color {
     width: 60px;
     height: 60px;
     border-radius: 100%;
     transition: all 0.2s ease;
+    border: 3px solid #fff;
 }
 
 .red {
@@ -44,6 +58,10 @@
     background-color: purple;
 }
 
+.black {
+    background-color: black;
+}
+
 .selected {
     width: 80px;
     height: 80px;
@@ -53,4 +71,8 @@
 .color:hover {
     cursor: pointer;
     transform: scale(1.2);
+}
+
+.colorPicker:hover {
+    cursor: pointer;
 }

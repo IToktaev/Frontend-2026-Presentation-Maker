@@ -50,6 +50,10 @@ function SlideTools() {
     const isBackgroundDisplayVisible = false;
     const isGradient = false;
 
+    const onPickColor = () => {
+
+    }
+
     return(  
        <div className ={styles.toolArea}>
            <h3 className={styles.toolName}>Слайд</h3>
@@ -71,7 +75,7 @@ function SlideTools() {
                 <div className={styles.backgroundDisplay}>
                     {!isGradient && (
                         <>
-                            <Palette /> 
+                            <Palette onPickColor={onPickColor} /> 
                             <Button className={
                                 styles.setBackgroundButton + ' ' + styles.changeColorType
                             }>
@@ -85,7 +89,7 @@ function SlideTools() {
 
                     {isGradient && (
                         <>
-                            <Palette />
+                            <Palette onPickColor={onPickColor} />
                             <div className={styles.gradientAngle}>
                                 <p>Угол градиента:</p>
                                 <TextInput 

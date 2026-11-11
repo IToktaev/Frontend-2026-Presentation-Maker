@@ -29,7 +29,9 @@ function Text(object: TextObject, scale: number, slideId: string) {
     }
 
     useEffect(() => {
-        if (!isEditing) return
+        if (!isEditing) {
+            return
+        } 
 
         const handleMouseDown = (event: MouseEvent) => {
             if (!textareaRef.current?.contains(event.target as Node)) {
