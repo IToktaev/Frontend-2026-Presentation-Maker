@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { generateId, generateIds } from "../model/functions/idGeneration.js";
-import { 
+import {
     addObjectToPresentation,
     createCircle,
     createImage,
@@ -12,244 +12,281 @@ import {
     updateFontFamily,
     updateFontSize,
     updateFontStyle,
+    updateFontWeight,
     updatePosition,
-    updateSize
-} from '../model/functions/objects.js'
+    updateSize,
+    updateText,
+    updateTextDecoration
+} from "../model/functions/objects.js";
 import type { Slide } from "../model/types/slide.js";
-import type { 
-    CircleData, 
-    FigureObject, 
-    ImageData, 
-    ImageObject, 
-    RectangleData, 
-    TextData, 
-    TextObject, 
-    TriangleData 
+import type {
+    FigureObject,
+    ImageObject,
+    TextObject
 } from "../model/types/objects.js";
 import { createPresentation } from "../model/functions/presentation.js";
-import type { Presentation } from "../model/types/presentation.js";
-
-function createTestSlideWithTextObjects(textObjectIds: string[]): Slide {
-    return {
-        id: generateId(),
-        background: {type: 'transparent'},
-        slideObjects: textObjectIds.map(id => createTestTextObject(id))
-    }
-}
 
 function createTestTextObject(id: string): TextObject {
     return {
-        size: {width: 100, height: 100},
-        position: {x: 0, y: 0},
-        fontFamily: 'Arial',
+        size: { width: 100, height: 100 },
+        position: { x: 0, y: 0 },
+        fontFamily: "Arial",
         fontSize: 16,
-        fontStyle: 'normal',
-        text: 'abc',
-        type: 'text',
-        color: '#ff0000',
+        fontStyle: "normal",
+        fontWeight: "normal",
+        textDecoration: "none",
+        text: "abc",
+        type: "text",
+        color: "#ff0000",
         id
-    }
+    };
 }
 
 function createTestImageObject(id: string): ImageObject {
     return {
-        size: {width: 100, height: 100},
-        position: {x: 0, y: 0},
-        type: 'image',
+        size: { width: 100, height: 100 },
+        position: { x: 0, y: 0 },
+        type: "image",
         id,
-        src: 'url'
-    }
+        src: "url"
+    };
 }
 
-describe('addObjectToPresentation', () => {
-    it('should add circle, rectangle and triangle', () => {
-        const [circleId, rectangleId, triangleId] = generateIds(3)
-        const id = generateId()
-        const slideId = generateId()
+function createTestSlide(objects: Slide["slideObjects"] = []): Slide {
+    return {
+        id: generateId(),
+        background: { type: "transparent" },
+        slideObjects: objects
+    };
+}
 
-        const presentation: Presentation = createPresentation('My Presentation', id, slideId)
+describe("addObjectToPresentation", () => {
+    it("should add different objects to presentation", () => {
+        const [circleId, rectangleId, triangleId, textId, imageId] = generateIds(5);
+        const presentationId = generateId();
+        const slideId = generateId();
 
-        const circleData: CircleData = {
-            size: {width: 100, height: 100},
-            position:{x: 0, y: 0},
-            color: '#ff0000'
-        }
-        const circle = createCircle(circleData, circleId)
+        const presentation = createPresentation("My Presentation", presentationId, slideId);
 
-        const rectangleData: RectangleData = {
-            size: {width: 100, height: 100},
-            position:{x: 0, y: 0},
-            color: '#ff0000'
-        }
-        const rectangle = createRectangle(rectangleData, rectangleId)
-
-        const triangleData: TriangleData = {
-            size: {width: 100, height: 100},
-            position:{x: 0, y: 0},
-            color: '#ff0000',
-            point1: {x: 100, y: 100},
-            point2: {x: 100, y: 100},
-            point3: {x: 100, y: 100},
-        }
-        const triangle = createTriangle(triangleData, triangleId)
-
-        const textData: TextData = {
-            size: {width: 100, height: 100},
-            position:{x: 0, y: 0},
-            fontFamily: 'Arial',
+        const text = createText({
+            size: { width: 100, height: 100 },
+            position: { x: 0, y: 0 },
+            fontFamily: "Arial",
             fontSize: 16,
-            fontStyle: 'normal',
-            text: 'abcd',
-            color: 'red'
+            fontStyle: "normal",
+            fontWeight: "normal",
+            textDecoration: "none",
+            text: "abcd",
+            color: "red"
+        }, textId);
+
+        const image = createImage({
+            size: { width: 100, height: 100 },
+            position: { x: 0, y: 0 },
+            src: "url"
+        }, imageId);
+
+        const circle = createCircle({
+            size: { width: 100, height: 100 },
+            position: { x: 0, y: 0 },
+            color: "#ff0000"
+        }, circleId);
+
+        const rectangle = createRectangle({
+            size: { width: 100, height: 100 },
+            position: { x: 0, y: 0 },
+            color: "#ff0000"
+        }, rectangleId);
+
+        const triangle = createTriangle({
+            size: { width: 100, height: 100 },
+            position: { x: 0, y: 0 },
+            color: "#ff0000",
+            point1: { x: 100, y: 100 },
+            point2: { x: 100, y: 100 },
+            point3: { x: 100, y: 100 }
+        }, triangleId);
+
+        let updatedPresentation = presentation;
+
+        for (const object of [text, image, circle, rectangle, triangle]) {
+            updatedPresentation = addObjectToPresentation(updatedPresentation, {
+                slideId,
+                object
+            });
         }
-        const text = createText(textData, circleId)
 
-        const imageData: ImageData = {
-            size: {width: 100, height: 100},
-            position:{x: 0, y: 0},
-            src: 'url'
-        }
-        const image = createImage(imageData, circleId)
+        const objects = updatedPresentation.slides[0].slideObjects;
 
-        let updatedPresentation = presentation
-        updatedPresentation = addObjectToPresentation(updatedPresentation, {
-            slideId: slideId, object: text
-        })
-        updatedPresentation = addObjectToPresentation(updatedPresentation, {
-            slideId: slideId, object: image
-        })
-        updatedPresentation = addObjectToPresentation(updatedPresentation, {
-            slideId: slideId, object: circle
-        })
-        updatedPresentation = addObjectToPresentation(updatedPresentation, {
-            slideId: slideId, object: rectangle
-        })
-        updatedPresentation = addObjectToPresentation(updatedPresentation, {
-            slideId: slideId, object: triangle
-        })
+        expect(objects).toHaveLength(5);
+        expect(objects.map(object => object.type)).toEqual([
+            "text",
+            "image",
+            "figure",
+            "figure",
+            "figure"
+        ]);
 
-        expect(updatedPresentation.slides[0].slideObjects.length).toBe(5)
-        expect(updatedPresentation.slides[0].slideObjects[0].type).toBe('text')
-        expect(updatedPresentation.slides[0].slideObjects[1].type).toBe('image')
-        expect(updatedPresentation.slides[0].slideObjects[2].type).toBe('figure')
-        expect(updatedPresentation.slides[0].slideObjects[3].type).toBe('figure')
-        expect(updatedPresentation.slides[0].slideObjects[4].type).toBe('figure')
+        expect((objects[2] as FigureObject).figureType).toBe("circle");
+        expect((objects[3] as FigureObject).figureType).toBe("rectangle");
+        expect((objects[4] as FigureObject).figureType).toBe("triangle");
+        expect(presentation.slides[0].slideObjects).toHaveLength(0);
+    });
+});
 
-        expect((
-            updatedPresentation.slides[0].slideObjects[2] as FigureObject).figureType).toBe('circle')
-        expect((
-            updatedPresentation.slides[0].slideObjects[3] as FigureObject).figureType).toBe('rectangle')
-        expect((
-            updatedPresentation.slides[0].slideObjects[4] as FigureObject).figureType).toBe('triangle')
+describe("removeObjects", () => {
+    it("should remove all selected objects", () => {
+        const ids = generateIds(3);
+        const slide = createTestSlide(ids.map(id => createTestTextObject(id)));
 
-        expect(presentation.slides[0].slideObjects.length).toBe(0)
-    })
-})
+        const updatedSlide = removeObjects(slide, ids);
 
-describe('removeObjects', () => {
-    it('should remove each object', () => {
-        const ids = generateIds(3)
-        const slide: Slide = createTestSlideWithTextObjects(ids)
+        expect(updatedSlide.slideObjects).toHaveLength(0);
+        expect(slide.slideObjects).toHaveLength(3);
+    });
 
-        const updatedSlide = removeObjects(slide, ids)
+    it("should remove only selected objects", () => {
+        const [firstId, secondId, thirdId] = generateIds(3);
+        const slide = createTestSlide([
+            createTestTextObject(firstId),
+            createTestTextObject(secondId),
+            createTestTextObject(thirdId)
+        ]);
 
-        expect(updatedSlide.slideObjects.length).toBe(0)
+        const updatedSlide = removeObjects(slide, [firstId, thirdId]);
 
-        expect(slide.slideObjects.length).toBe(3)
-    })
+        expect(updatedSlide.slideObjects).toHaveLength(1);
+        expect(updatedSlide.slideObjects[0].id).toBe(secondId);
+        expect(slide.slideObjects).toHaveLength(3);
+    });
+});
 
-    it('should remove part of objects', () => {
-        const [firstObjectId, secondObjectId, thirdObjectId] = generateIds(3)
-        const slide: Slide = 
-            createTestSlideWithTextObjects([firstObjectId, secondObjectId, thirdObjectId])
+describe("updatePosition", () => {
+    it("should update object position", () => {
+        const object = createTestTextObject(generateId());
 
-        const updatedSlide = removeObjects(slide, [firstObjectId, thirdObjectId])
+        const updatedObject = updatePosition(object, { x: 100, y: 100 });
 
-        expect(updatedSlide.slideObjects.length).toBe(1)
+        expect(updatedObject.position).toEqual({ x: 100, y: 100 });
+        expect(object.position).toEqual({ x: 0, y: 0 });
+    });
+});
 
-        expect(slide.slideObjects.length).toBe(3)
-    })
-})
+describe("updateSize", () => {
+    it("should update object size", () => {
+        const object = createTestTextObject(generateId());
 
-describe('updatePosition', () => {
-    it('should update object position', () => {
-        const objectId = generateId()
-        const slide: Slide = createTestSlideWithTextObjects([objectId])
+        const updatedObject = updateSize(object, { width: 200, height: 300 });
 
-        const updatedSlide = updatePosition(slide, objectId, {x: 100, y: 100})
+        expect(updatedObject.size).toEqual({ width: 200, height: 300 });
+        expect(object.size).toEqual({ width: 100, height: 100 });
+    });
+});
 
-        expect(updatedSlide.slideObjects[0].position).toEqual({x: 100, y: 100})
+describe("updateColor", () => {
+    it("should update text object color", () => {
+        const object = createTestTextObject(generateId());
 
-        expect(slide.slideObjects[0].position).toEqual({x: 0, y: 0})
-    })
-})
+        const updatedObject = updateColor(object, "#000000");
 
-describe('updateSize', () => {
-    it('should update object size', () => {
-        const objectId = generateId()
-        const slide: Slide = createTestSlideWithTextObjects([objectId])
+        expect((updatedObject as TextObject).color).toBe("#000000");
+        expect(object.color).toBe("#ff0000");
+    });
 
-        const updatedSlide = updateSize(slide, objectId, {width: 1000, height: 1000})
+    it("should update figure object color", () => {
+        const object = createCircle({
+            size: { width: 100, height: 100 },
+            position: { x: 0, y: 0 },
+            color: "#ff0000"
+        }, generateId());
 
-        expect(updatedSlide.slideObjects[0].size).toEqual({width: 1000, height: 1000})
+        const updatedObject = updateColor(object, "#000000");
 
-        expect(slide.slideObjects[0].size).toEqual({width: 100, height: 100})
-    })
-})
+        expect((updatedObject as FigureObject).color).toBe("#000000");
+        expect(object.color).toBe("#ff0000");
+    });
 
-describe('updateColor', () => {
-    it('should update object color', () => {
-        const objectId = generateId()
-        const slide: Slide = createTestSlideWithTextObjects([objectId])
+    it("should not update image color", () => {
+        const object = createTestImageObject(generateId());
 
-        const updatedSlide = updateColor(slide, objectId, '#000000')
+        const updatedObject = updateColor(object, "#000000");
 
-        expect((updatedSlide.slideObjects[0] as TextObject).color).toEqual('#000000')
+        expect(updatedObject).toBe(object);
+    });
+});
 
-        expect((slide.slideObjects[0] as TextObject).color).toEqual('#ff0000')
-    })  
+describe("updateText", () => {
+    it("should update text content", () => {
+        const object = createTestTextObject(generateId());
 
-    it('should try to set color to Image', () => {
-        const objectId = generateId()
-        const slide: Slide = createTestSlideWithTextObjects([])
-        slide.slideObjects = [createTestImageObject(objectId)]
+        const updatedObject = updateText(object, "new text");
 
-        const updatedSlide = updateColor(slide, objectId, '#000000')
+        expect((updatedObject as TextObject).text).toBe("new text");
+        expect(object.text).toBe("abc");
+    });
 
-        expect(updatedSlide).toEqual(slide)
-    })  
-})
+    it("should not update image object", () => {
+        const object = createTestImageObject(generateId());
 
-describe('updateTextProperties', () => {
-    it('should update text properties (fontStyle, fontSize, fontFamily)', () => {
-        const objectId = generateId()
-        const slide: Slide = createTestSlideWithTextObjects([objectId])
+        const updatedObject = updateText(object, "new text");
 
-        let updatedSlide
-        updatedSlide = updateFontSize(slide, objectId, 13)
-        updatedSlide = updateFontFamily(updatedSlide, objectId, 'Times new Roman')
-        updatedSlide = updateFontStyle(updatedSlide, objectId, 'bold')
-        
+        expect(updatedObject).toBe(object);
+    });
+});
 
-        expect((updatedSlide.slideObjects[0] as TextObject).fontSize).toEqual(13)
-        expect((updatedSlide.slideObjects[0] as TextObject).fontFamily).toEqual('Times new Roman')
-        expect((updatedSlide.slideObjects[0] as TextObject).fontStyle).toEqual('bold')
+describe("updateTextProperties", () => {
+    it("should update font size", () => {
+        const object = createTestTextObject(generateId());
 
-        expect((slide.slideObjects[0] as TextObject).fontSize).toEqual(16)
-        expect((slide.slideObjects[0] as TextObject).fontFamily).toEqual('Arial')
-        expect((slide.slideObjects[0] as TextObject).fontStyle).toEqual('normal')
-    })  
+        const updatedObject = updateFontSize(object, 24);
 
-    it('should try to set text properties to image', () => {
-        const objectId = generateId()
-        const slide: Slide = createTestSlideWithTextObjects([])
-        slide.slideObjects = [createTestImageObject(objectId)]
+        expect((updatedObject as TextObject).fontSize).toBe(24);
+        expect(object.fontSize).toBe(16);
+    });
 
-        let updatedSlide
-        updatedSlide = updateFontSize(slide, objectId, 13)
-        updatedSlide = updateFontFamily(slide, objectId, 'Times new Roman')
-        updatedSlide = updateFontStyle(slide, objectId, 'bold')
-        
-        expect(updatedSlide).toEqual(slide)
-    })  
-})
+    it("should update font family", () => {
+        const object = createTestTextObject(generateId());
+
+        const updatedObject = updateFontFamily(object, "Times New Roman");
+
+        expect((updatedObject as TextObject).fontFamily).toBe("Times New Roman");
+        expect(object.fontFamily).toBe("Arial");
+    });
+
+    it("should update font style", () => {
+        const object = createTestTextObject(generateId());
+
+        const updatedObject = updateFontStyle(object, "italic");
+
+        expect((updatedObject as TextObject).fontStyle).toBe("italic");
+        expect(object.fontStyle).toBe("normal");
+    });
+
+    it("should update font weight", () => {
+        const object = createTestTextObject(generateId());
+
+        const updatedObject = updateFontWeight(object, "bold");
+
+        expect((updatedObject as TextObject).fontWeight).toBe("bold");
+        expect(object.fontWeight).toBe("normal");
+    });
+
+    it("should update text decoration", () => {
+        const object = createTestTextObject(generateId());
+
+        const updatedObject = updateTextDecoration(object, "underline");
+
+        expect((updatedObject as TextObject).textDecoration).toBe("underline");
+        expect(object.textDecoration).toBe("none");
+    });
+
+    it("should not update image text properties", () => {
+        const object = createTestImageObject(generateId());
+
+        expect(updateFontSize(object, 24)).toBe(object);
+        expect(updateFontFamily(object, "Times New Roman")).toBe(object);
+        expect(updateFontStyle(object, "italic")).toBe(object);
+        expect(updateFontWeight(object, "bold")).toBe(object);
+        expect(updateTextDecoration(object, "underline")).toBe(object);
+    });
+});

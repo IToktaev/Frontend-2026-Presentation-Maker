@@ -8,7 +8,7 @@ import {
     getPreviewMode,
     getSelectedSlideIds,
     initializeViewModel,
-    selectNewSlide,
+    selectSlide,
     setIdsBeforeRemoval,
     setPreviewMode,
     switchSlide,
@@ -58,7 +58,7 @@ describe("selectNewSlide", () => {
         const slideIds = generateIds(3)
         initializeWithSlides(slideIds)
 
-        selectNewSlide(slideIds[2], false)
+        selectSlide(slideIds[2], false)
 
         expect(getCurrentSlideId()).toBe(slideIds[2])
         expect(getSelectedSlideIds()).toEqual([slideIds[2]])
@@ -68,7 +68,7 @@ describe("selectNewSlide", () => {
         const slideIds = generateIds(3)
         initializeWithSlides(slideIds)
 
-        selectNewSlide(slideIds[1], true)
+        selectSlide(slideIds[1], true)
 
         expect(getCurrentSlideId()).toBe(slideIds[1])
         expect(getSelectedSlideIds()).toEqual([
@@ -81,8 +81,8 @@ describe("selectNewSlide", () => {
         const slideIds = generateIds(3)
         initializeWithSlides(slideIds)
 
-        selectNewSlide(slideIds[1], true)
-        selectNewSlide(slideIds[0], true)
+        selectSlide(slideIds[1], true)
+        selectSlide(slideIds[0], true)
 
         expect(getCurrentSlideId()).toBe(slideIds[1])
         expect(getSelectedSlideIds()).toEqual([slideIds[1]])
@@ -92,7 +92,7 @@ describe("selectNewSlide", () => {
         const slideIds = generateIds(2)
         initializeWithSlides(slideIds)
 
-        selectNewSlide(slideIds[0], true)
+        selectSlide(slideIds[0], true)
 
         expect(getSelectedSlideIds()).toEqual([slideIds[0]])
     })
@@ -112,7 +112,7 @@ describe("switchSlide", () => {
     it("should switch to the previous slide", () => {
         const slideIds = generateIds(3)
         initializeWithSlides(slideIds)
-        selectNewSlide(slideIds[2], false)
+        selectSlide(slideIds[2], false)
 
         switchSlide(-1)
 
@@ -122,7 +122,7 @@ describe("switchSlide", () => {
     it("should not switch past the last slide", () => {
         const slideIds = generateIds(3)
         initializeWithSlides(slideIds)
-        selectNewSlide(slideIds[2], false)
+        selectSlide(slideIds[2], false)
 
         switchSlide(1)
 
@@ -153,7 +153,7 @@ describe("setPreviewMode", () => {
     it("should enable preview mode and keep only the current slide selected", () => {
         const slideIds = generateIds(3)
         initializeWithSlides(slideIds)
-        selectNewSlide(slideIds[1], true)
+        selectSlide(slideIds[1], true)
 
         setPreviewMode(true)
 

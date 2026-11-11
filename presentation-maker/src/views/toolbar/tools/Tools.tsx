@@ -7,21 +7,28 @@ import FigureIcon from '../../../assets/figure-icon.png'
 
 import styles from './Tools.module.css'
 import { Palette } from "../../palette/Palette";
-import { useState } from "react";
-import { getSelectedObjectIds, getSelectedSlideIds } from "../../../viewModel/viewModel";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { getCurrentSlideId, getSelectedObjectIds } from "../../../viewModel/viewModel";
 import { dispatch, getState } from "../../../model/editor";
 import type { SlideObject } from "../../../model/types/objects";
-import { updateColor, updateFontFamily, updateFontSize, updateFontStyle, updateFontWeight, updateObjectsInPresentation, updateTextDecoration } from "../../../model/functions/objects";
+import { addObjectToPresentation, createImage, updateColor, updateFontFamily, updateFontSize, updateFontStyle, updateFontWeight, updateObjectsInPresentation, updateTextDecoration } from "../../../model/functions/objects";
 import { useTextProperties } from "../../../hooks/useTextProperties";
+import { useImageLoad } from "../../../hooks/useImageLoad";
+import { generateId } from "../../../model/functions/idGeneration";
 
 const MAX_FONT_SIZE = 200
 const MIN_FONT_SIZE = 8
 
+const NEW_OBJECT_POSITION = {x: 200, y: 150}
+const NEW_OBJECT_SIZE = {width: 300, height: 200}
+
 function Tools() {
     const [isPaletteOpen, setIsPaletteOpen] = useState<boolean>(false) 
+    const [file, setFile] = useState<File | null>(null);
+    const src = useImageLoad(file);
 
     const presentation = getState()
-    const selectedSlideId = getSelectedSlideIds()[0]
+    const selectedSlideId = getCurrentSlideId()
     const currentSlide = presentation?.slides.find(
         slide => slide.id === selectedSlideId
     )
@@ -33,7 +40,9 @@ function Tools() {
     const selectedTextObject = lastSelectedObject?.type === 'text' ? lastSelectedObject : undefined
     const textProperties = useTextProperties(selectedTextObject)
 
-   const updateSelectedText = (update: (object: SlideObject) => SlideObject) => {
+    const loadImageRef = useRef<HTMLInputElement | null>(null)
+
+    const updateSelectedText = (update: (object: SlideObject) => SlideObject) => {
         if (!selectedSlideId || !selectedTextObject) {
             return
         }
@@ -82,12 +91,44 @@ function Tools() {
         updateSelectedText(object => updateFontStyle(object, value))
     }
 
+    const handleFileChange = useCallback(
+        (event: React.ChangeEvent<HTMLInputElement>) => {
+            setFile(event.target.files?.[0] ?? null)
+        }, []
+    )
+
+    useEffect(() => {
+        const currentSlideId = getCurrentSlideId()
+
+        if (typeof src !== 'string' || !currentSlideId) {
+            return
+        }
+
+        const imageObject: SlideObject = createImage({
+            src: src,
+            position: NEW_OBJECT_POSITION,
+            size: NEW_OBJECT_SIZE,
+        }, generateId())
+
+        dispatch(addObjectToPresentation, {slideId: currentSlideId, object: imageObject})
+        setFile(null)
+    }, [src])
+
     return(
        <div className ={styles.toolArea}>
            <div className={styles.tools + ' ' + styles.toolsTop}>
                 <h3 className={styles.toolName}>Инструменты</h3>
                 <Button className={styles.icon}><img src={TextIcon} /></Button>
-                <Button className={styles.icon}><img src={ImageIcon} /></Button>
+                <Button className={styles.icon} onClick={() => loadImageRef.current?.click()}>
+                    <img src={ImageIcon} />
+                </Button>
+                <input 
+                    type="file" 
+                    accept="image/*" 
+                    className={styles.loadImage} 
+                    ref={loadImageRef} 
+                    onChange={handleFileChange}
+                />
                 <Button className={styles.icon}><img src={FigureIcon} /></Button>
             </div>
 
