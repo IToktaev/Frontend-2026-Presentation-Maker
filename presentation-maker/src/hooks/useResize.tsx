@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type RefObject } from "react"
 import type { SlideObject } from "../model/types/objects"
 import { dispatch } from "../model/editor"
-import { updateObjectsInPresentation } from "../model/functions/objects"
+import { updateObjectsInPresentation, updateSize } from "../model/functions/objects"
 import type { Slide } from "../model/types/slide"
 
 const MIN_SIZE = 30
@@ -81,8 +81,8 @@ function useResize(
                 slideId: slide.id,
                 objectIds: selectedObjects.map(object => object.id),
                 update: (object) => {
-                    const resizedObject = resizedObjects.find(item => item.id === object.id)
-                    return resizedObject ? { ...object, size: resizedObject.size } : object
+                    const resized = resizedObjects.find(item => item.id === object.id)
+                    return resized ? updateSize(object, resized.size) : object
                 },
             })
 

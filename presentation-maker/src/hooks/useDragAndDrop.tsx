@@ -1,14 +1,15 @@
 import { useEffect, useRef, useState, type RefObject } from "react"
 import type { SlideObject } from "../model/types/objects"
 import { dispatch } from "../model/editor"
-import { updateObjectsInPresentation } from "../model/functions/objects"
+import { updateObjectsInPresentation, updatePosition } from "../model/functions/objects"
 import type { Slide } from "../model/types/slide"
 
 function useDragAndDrop(
     slide: Slide | undefined,
     selectedObjects: SlideObject[],
     slideContainer: RefObject<HTMLDivElement | null>,
-    resizeMarker: RefObject<HTMLDivElement | null>
+    resizeMarker: RefObject<HTMLDivElement | null>,
+    isEditing: boolean
 ): SlideObject[] {
     const [draggedObjects, setDraggedObjects] = useState<SlideObject[]>(selectedObjects)
 
@@ -23,7 +24,7 @@ function useDragAndDrop(
     }, [draggedObjects])
 
     useEffect(() => {
-        if (!slide) { 
+        if (!slide || isEditing) { 
             return
         }
 
@@ -83,7 +84,7 @@ function useDragAndDrop(
                 objectIds: selected.map(object => object.id),
                 update: (object) => {
                     const dragged = moved.find(item => item.id === object.id)
-                    return dragged ? { ...object, position: dragged.position } : object
+                    return dragged ? updatePosition(object, dragged.position) : object
                 },
             })
 
@@ -99,7 +100,7 @@ function useDragAndDrop(
             document.removeEventListener("mousemove", onMouseMove)
             document.removeEventListener("mouseup", onMouseUp)
         }
-    }, [slide])
+    }, [slide, isEditing])
 
     return draggedObjects.length > 0 ? draggedObjects : []
 }

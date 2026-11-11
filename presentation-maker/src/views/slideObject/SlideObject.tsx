@@ -9,12 +9,13 @@ import { selectObject } from "../../viewModel/viewModel"
 import type React from "react"
 
 type ObjectProps = {
-    object: Slide['slideObjects'][number];
-    scale: number;
-    isInteractive: boolean;
+    object: Slide['slideObjects'][number]
+    scale: number
+    isInteractive: boolean
+    slideId: string
 };
 
-function SlideObject({ object, scale, isInteractive }: ObjectProps) {
+function SlideObject({ object, scale, isInteractive, slideId }: ObjectProps) {
     let content
 
     const handleMouseDown = (event: React.MouseEvent) => {
@@ -24,7 +25,7 @@ function SlideObject({ object, scale, isInteractive }: ObjectProps) {
     }
 
     if (object.type === 'text') {
-        content = Text(object, scale)
+        content = Text(object, scale, slideId)
     } else if (object.type === 'image') {
         content = Image(object, scale)
     } else if (object.type === 'figure') {
@@ -38,7 +39,9 @@ function SlideObject({ object, scale, isInteractive }: ObjectProps) {
     }
 
     return (
-        <div onMouseDown={(event) => handleMouseDown(event)}>
+        <div 
+            onMouseDown={(event) => handleMouseDown(event)}
+        >
             {content}
         </div>
     )

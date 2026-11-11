@@ -69,6 +69,7 @@ function Slide({scale, slide, onObjectClick, contentRef, children, isObjectInter
                         object={object} 
                         scale={scale} 
                         isInteractive={isObjectInteractive}
+                        slideId={slide.id}
                     />
                 ))}
             </div>

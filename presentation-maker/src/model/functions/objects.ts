@@ -174,132 +174,95 @@ function updateObjectsInPresentation(presentation: Presentation, params: {
     }
 }
 
-function updateObject(
-    slide: Slide, 
-    objectId: string, 
-    updateFunction: (object: SlideObject) => SlideObject
-): Slide {
-    const objects = slide.slideObjects.map(object => {
-        if (object.id === objectId) {
-            return updateFunction(object)
-        } else {
-            return object
-        }
-    })
-
+function updatePosition(object: SlideObject, newPosition: Coordinates): SlideObject {
     return {
-        ...slide,
-        slideObjects: objects
+        ...object,
+        position: newPosition
     }
 }
 
-function updatePosition(slide: Slide, objectId: string, newPosition: Coordinates): Slide {
-    return updateObject(slide, objectId, (object) => {
-        return {
-            ...object,
-            position: newPosition
-        }
-    })
+function updateText(object: SlideObject, newText: string): SlideObject {
+    if (object.type !== 'text') {
+        return object
+    }
+
+    return {
+        ...object,
+        text: newText
+    }
 }
 
-function updateText(slide: Slide, objectId: string, newText: string): Slide {
-    return updateObject(slide, objectId, (object) => {
-        if (object.type !== 'text') {
-            return object
-        }
-
-        return {
-            ...object,
-            text: newText
-        }
-    })
+function updateSize(object: SlideObject, newSize: Size): SlideObject {
+    return {
+        ...object,
+        size: newSize
+    }
 }
 
-function updateSize(slide: Slide, objectId: string, newSize: Size): Slide {
-    return updateObject(slide, objectId, (object) => {
-        return {
-            ...object,
-            size: newSize
-        }
-    })
+function updateColor(object: SlideObject, newColor: string): SlideObject {
+    if (object.type === 'image') {
+        return object
+    }
+
+    return {
+        ...object,
+        color: newColor
+    }
 }
 
-function updateColor(slide: Slide, objectId: string, newColor: string): Slide {
-    return updateObject(slide, objectId, (object) => {
-        if (object.type === 'image') {
-            return object
-        }
+function updateFontSize(object: SlideObject, newFontSize: number): SlideObject {
+    if (object.type !== 'text') {
+        return object
+    }
 
-        return {
-            ...object,
-            color: newColor
-        }
-    })
+    return {
+        ...object,
+        fontSize: newFontSize
+    }
 }
 
-function updateFontSize(slide: Slide, objectId: string, newFontSize: number): Slide {
-    return updateObject(slide, objectId, (object) => {
-        if (object.type !== 'text') {
-            return object
-        }
+function updateFontStyle(object: SlideObject, newFontStyle: FontStyle): SlideObject {
+    if (object.type !== 'text') {
+        return object
+    }
 
-        return {
-            ...object,
-            fontSize: newFontSize
-        }
-    })
+    return {
+        ...object,
+        fontStyle: newFontStyle
+    }
 }
 
-function updateFontStyle(slide: Slide, objectId: string, newFontStyle: FontStyle): Slide {
-    return updateObject(slide, objectId, (object) => {
-        if (object.type !== 'text') {
-            return object
-        }
+function updateFontWeight(object: SlideObject, newFontWeight: FontWeight): SlideObject {
+    if (object.type !== 'text') {
+        return object
+    }
 
-        return {
-            ...object,
-            fontStyle: newFontStyle
-        }
-    })
+    return {
+        ...object,
+        fontWeight: newFontWeight
+    }
 }
 
-function updateFontWeight(slide: Slide, objectId: string, newFontWeight: FontWeight): Slide {
-    return updateObject(slide, objectId, (object) => {
-        if (object.type !== 'text') {
-            return object
-        }
+function updateTextDecoration(object: SlideObject, newTextDecoration: TextDecoration): SlideObject {
+    if (object.type !== 'text') {
+        return object
+    }
 
-        return {
-            ...object,
-            fontWeight: newFontWeight
-        }
-    })
+    return {
+        ...object,
+        textDecoration: newTextDecoration
+    }
 }
 
-function updateTextDecoration(slide: Slide, objectId: string, newTextDecoration: TextDecoration): Slide {
-    return updateObject(slide, objectId, (object) => {
-        if (object.type !== 'text') {
-            return object
-        }
+function updateFontFamily(object: SlideObject, newFontFamily: string): SlideObject {
+    if (object.type !== 'text') {
+        return object
+    }
 
-        return {
-            ...object,
-            textDecoration: newTextDecoration
-        }
-    })
-}
-
-function updateFontFamily(slide: Slide, objectId: string, newFontFamily: string): Slide {
-    return updateObject(slide, objectId, (object) => {
-        if (object.type !== 'text') {
-            return object
-        }
-
-        return {
-            ...object,
-            fontFamily: newFontFamily
-        }
-    })
+    return {
+        ...object,
+        fontFamily: newFontFamily
+    }
 }
 
 export {

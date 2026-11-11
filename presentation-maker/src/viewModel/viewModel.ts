@@ -1,9 +1,10 @@
 import { getState } from "../model/editor"
 
 type ViewModel = {
-    selectedSlideIds: string[],
+    selectedSlideIds: string[]
     selectedObjectIds: string[]
     isPreviewMode: boolean
+    editableTextObjectId: string | null
 }
 
 let viewModel: ViewModel | null = null
@@ -70,7 +71,8 @@ function initializeViewModel(): void {
     viewModel = {
         selectedSlideIds: selectedSlideIds,
         selectedObjectIds: [],
-        isPreviewMode: false
+        isPreviewMode: false,
+        editableTextObjectId: null
     }
 }
 
@@ -92,6 +94,22 @@ function getSelectedObjectIds(): string[] {
     }
 
     return [...viewModel.selectedObjectIds]
+}
+
+function getEditableTextObjectId(): string | null {
+    if (!viewModel) {
+        return null
+    }
+
+    return viewModel.editableTextObjectId
+}
+
+function setEditableTextObjectId(id: string | null) {
+    if (!viewModel) {
+        return
+    }
+
+    viewModel.editableTextObjectId = id
 }
 
 function selectObject(newId: string, ctrl: boolean) {
@@ -231,5 +249,7 @@ export {
     switchSlide,
     selectObject,
     deselectObjects,
-    getSelectedObjectIds
+    getSelectedObjectIds,
+    getEditableTextObjectId,
+    setEditableTextObjectId
 }

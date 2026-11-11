@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { useDragAndDrop } from '../../hooks/useDragAndDrop'
 import type { SlideObject } from '../../model/types/objects'
 import type { Slide as SlideData } from '../../model/types/slide'
-import { deselectObjects, getCurrentSlideId, getSelectedObjectIds } from '../../viewModel/viewModel'
+import { deselectObjects, getCurrentSlideId, getEditableTextObjectId, getSelectedObjectIds } from '../../viewModel/viewModel'
 import { Slide } from '../slide/Slide'
 import styles from './Workspace.module.css'
 import { useResize } from '../../hooks/useResize'
@@ -15,9 +15,15 @@ const OFFSET = 5
 
 function Workspace({slides}: WorkSpaceProps) {
     const onClickToObject = (event: React.MouseEvent) => {
+        if (window.getSelection()?.toString()) {
+            return
+        }
+
         const area = selectedAreaRef.current
+
         if (area) {
             const rect = area.getBoundingClientRect()
+
             if (
                 event.clientX >= rect.left &&
                 event.clientX <= rect.right &&
@@ -27,6 +33,7 @@ function Workspace({slides}: WorkSpaceProps) {
                 return
             }
         }
+
         if (event.target === event.currentTarget) {
             deselectObjects()
         }
@@ -43,7 +50,9 @@ function Workspace({slides}: WorkSpaceProps) {
     const selectedObjects: SlideObject[] =
         slide?.slideObjects?.filter(object => selectedObjectIds.includes(object.id)) ?? [];
 
-    const draggedObjects = useDragAndDrop(slide, selectedObjects, slideRef, resizeMarkerRef)
+    const isTextEditing = getEditableTextObjectId() ? true : false
+
+    const draggedObjects = useDragAndDrop(slide, selectedObjects, slideRef, resizeMarkerRef, isTextEditing)
     const resizedObjects = useResize(slide, selectedObjects, slideRef, resizeMarkerRef)
 
     if (!slide || !draggedObjects || !resizedObjects) {
