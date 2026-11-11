@@ -46,6 +46,7 @@ function PreviewOverlay({slides, onClose}: PreviewProps) {
             <Slide 
                 scale={1.2}
                 slide={slide}
+                isObjectInteractive={false}
             />
             <div className={styles.switchPanel}>
                 <Button className={leftSwitcherClassName} onClick={handlePrev}>Назад</Button>

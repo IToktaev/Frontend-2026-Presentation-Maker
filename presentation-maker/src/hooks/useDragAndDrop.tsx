@@ -7,7 +7,8 @@ import type { Slide } from "../model/types/slide"
 function useDragAndDrop(
     slide: Slide | undefined,
     selectedObjects: SlideObject[],
-    slideContainer: RefObject<HTMLDivElement | null>
+    slideContainer: RefObject<HTMLDivElement | null>,
+    resizeMarker: RefObject<HTMLDivElement | null>
 ): SlideObject[] {
     const [draggedObjects, setDraggedObjects] = useState<SlideObject[]>(selectedObjects)
 
@@ -34,7 +35,11 @@ function useDragAndDrop(
 
         const onMouseDown = (event: MouseEvent) => {
             const container = slideContainer.current
-            if (!container) {
+            if (
+                !container || 
+                event.target === resizeMarker.current ||
+                !container.contains(event.target as Node)
+            ) {
                 return
             }
 
@@ -96,7 +101,7 @@ function useDragAndDrop(
         }
     }, [slide])
 
-    return draggedObjects.length > 0 ? draggedObjects : selectedObjects
+    return draggedObjects.length > 0 ? draggedObjects : []
 }
 
 export {

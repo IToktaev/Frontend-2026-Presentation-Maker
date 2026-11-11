@@ -30,6 +30,7 @@ function SlideList({slides}: WorkSpaceProps) {
                         <Slide
                             scale={0.2}
                             slide={slide}
+                            isObjectInteractive={false}
                         />
                     </div>
                 )

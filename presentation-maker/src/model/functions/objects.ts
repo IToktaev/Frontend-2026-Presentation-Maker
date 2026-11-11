@@ -202,6 +202,19 @@ function updatePosition(slide: Slide, objectId: string, newPosition: Coordinates
     })
 }
 
+function updateText(slide: Slide, objectId: string, newText: string): Slide {
+    return updateObject(slide, objectId, (object) => {
+        if (object.type !== 'text') {
+            return object
+        }
+
+        return {
+            ...object,
+            text: newText
+        }
+    })
+}
+
 function updateSize(slide: Slide, objectId: string, newSize: Size): Slide {
     return updateObject(slide, objectId, (object) => {
         return {
@@ -307,5 +320,6 @@ export {
     updateFontSize,
     updateFontStyle,
     updateFontWeight,
+    updateText,
     updateTextDecoration
 }

@@ -14,3 +14,17 @@
     border-radius: 5px;
     pointer-events: none;
 }
+
+.resizeMarker {
+    width: 20px;
+    height: 20px;
+    background-color: red;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    pointer-events: auto;
+}
+
+.resizeMarker:hover {
+    cursor: nwse-resize;
+}

@@ -4,11 +4,12 @@ import { SlideObject } from '../slideObject/SlideObject'
 import type React from 'react'
 
 type SlideProps = {
-    scale: number,
-    slide: SlideData,
+    scale: number
+    slide: SlideData
     onObjectClick?: (event: React.MouseEvent) => void
-    children?: React.ReactNode,
+    children?: React.ReactNode
     contentRef?: React.RefObject<HTMLDivElement | null>
+    isObjectInteractive: boolean
 }
 
 function getBackgroundStyle(background: SlideData['background']) {
@@ -42,7 +43,7 @@ function getBackgroundStyle(background: SlideData['background']) {
     }
 }
 
-function Slide({scale, slide, onObjectClick, contentRef, children}: SlideProps) {
+function Slide({scale, slide, onObjectClick, contentRef, children, isObjectInteractive}: SlideProps) {
     const width = 1700
     const height = 880
 
@@ -67,6 +68,7 @@ function Slide({scale, slide, onObjectClick, contentRef, children}: SlideProps) 
                         key={object.id} 
                         object={object} 
                         scale={scale} 
+                        isInteractive={isObjectInteractive}
                     />
                 ))}
             </div>

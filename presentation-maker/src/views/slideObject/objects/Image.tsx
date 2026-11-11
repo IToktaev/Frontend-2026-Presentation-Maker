@@ -11,6 +11,7 @@ function Image(object: ImageObject, scale: number) {
                 height: object.size.height * scale,
             }}
             src={object.src}
+            draggable="false"
         />
     )
 }

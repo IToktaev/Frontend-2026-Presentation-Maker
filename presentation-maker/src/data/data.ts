@@ -60,7 +60,7 @@ function createTestPresentation(): Presentation {
         text: 'Лабораторная работа #2',
         color: '#000000',
         position: {x: 500, y: 500},
-        size: {width: 300, height: 200}
+        size: {width: 300, height: 200},
     }, generateId())
 
 

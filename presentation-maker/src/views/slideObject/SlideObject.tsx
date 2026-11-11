@@ -6,14 +6,22 @@ import { Rectangle } from "./objects/Rectangle"
 import { Triangle } from "./objects/Triangle"
 import type { CircleObject, RectangleObject, TriangleObject } from "../../model/types/objects"
 import { selectObject } from "../../viewModel/viewModel"
+import type React from "react"
 
 type ObjectProps = {
     object: Slide['slideObjects'][number];
     scale: number;
+    isInteractive: boolean;
 };
 
-function SlideObject({ object, scale }: ObjectProps) {
+function SlideObject({ object, scale, isInteractive }: ObjectProps) {
     let content
+
+    const handleMouseDown = (event: React.MouseEvent) => {
+        if (isInteractive) {
+            selectObject(object.id, event.ctrlKey)
+        }
+    }
 
     if (object.type === 'text') {
         content = Text(object, scale)
@@ -30,7 +38,7 @@ function SlideObject({ object, scale }: ObjectProps) {
     }
 
     return (
-        <div onMouseDown={(event) => selectObject(object.id, event.ctrlKey)}>
+        <div onMouseDown={(event) => handleMouseDown(event)}>
             {content}
         </div>
     )
