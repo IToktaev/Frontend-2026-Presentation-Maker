@@ -1,20 +1,30 @@
-import { Button } from "../../../components/button/Button";
-import { TextInput } from "../../../components/textInput/TextInput";
+import { Button } from "../../../components/button/Button"
+import { TextInput } from "../../../components/textInput/TextInput"
 
 import TextIcon from '../../../assets/text-icon.png'
 import ImageIcon from '../../../assets/image-icon.png'
 import FigureIcon from '../../../assets/figure-icon.png'
 
 import styles from './Tools.module.css'
-import { Palette } from "../../palette/Palette";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { getCurrentSlideId, getSelectedObjectIds } from "../../../viewModel/viewModel";
-import { dispatch, getState } from "../../../model/editor";
-import type { SlideObject } from "../../../model/types/objects";
-import { addObjectToPresentation, createImage, updateColor, updateFontFamily, updateFontSize, updateFontStyle, updateFontWeight, updateObjectsInPresentation, updateTextDecoration } from "../../../model/functions/objects";
-import { useTextProperties } from "../../../hooks/useTextProperties";
-import { useImageLoad } from "../../../hooks/useImageLoad";
-import { generateId } from "../../../model/functions/idGeneration";
+import { Palette } from "../../palette/Palette"
+import { useCallback, useEffect, useRef, useState } from "react"
+import { getCurrentSlideId, getSelectedObjectIds } from "../../../viewModel/viewModel"
+import { dispatch, getState } from "../../../model/editor"
+import type { SlideObject } from "../../../model/types/objects"
+import { 
+    addObjectToPresentation, 
+    createImage, 
+    updateColor, 
+    updateFontFamily, 
+    updateFontSize, 
+    updateFontStyle, 
+    updateFontWeight, 
+    updateObjectsInPresentation, 
+    updateTextDecoration 
+} from "../../../model/functions/objects"
+import { useTextProperties } from "../../../hooks/useTextProperties"
+import { useImageLoad } from "../../../hooks/useImageLoad"
+import { generateId } from "../../../model/functions/idGeneration"
 
 const MAX_FONT_SIZE = 200
 const MIN_FONT_SIZE = 8
@@ -24,8 +34,10 @@ const NEW_OBJECT_SIZE = {width: 300, height: 200}
 
 function Tools() {
     const [isPaletteOpen, setIsPaletteOpen] = useState<boolean>(false) 
-    const [file, setFile] = useState<File | null>(null);
-    const src = useImageLoad(file);
+    const [file, setFile] = useState<File | null>(null)
+    const [color, setColor] = useState<string>('')
+
+    const src = useImageLoad(file)
 
     const presentation = getState()
     const selectedSlideId = getCurrentSlideId()
@@ -39,7 +51,6 @@ function Tools() {
 
     const selectedTextObject = lastSelectedObject?.type === 'text' ? lastSelectedObject : undefined
     const textProperties = useTextProperties(selectedTextObject)
-
     const loadImageRef = useRef<HTMLInputElement | null>(null)
 
     const updateSelectedText = (update: (object: SlideObject) => SlideObject) => {
@@ -114,6 +125,10 @@ function Tools() {
         setFile(null)
     }, [src])
 
+    useEffect(() => { 
+        setColor(textProperties.fontColor)
+    }, [textProperties])
+
     return(
        <div className ={styles.toolArea}>
            <div className={styles.tools + ' ' + styles.toolsTop}>
@@ -184,7 +199,7 @@ function Tools() {
 
                     <Button 
                         className={styles.palette} 
-                        style={{ backgroundColor: textProperties?.fontColor ?? 'red' }}
+                        style={{backgroundColor: textProperties?.fontColor}}
                         onClick={() => setIsPaletteOpen(!isPaletteOpen)}
                     >
                     </Button>
@@ -193,7 +208,7 @@ function Tools() {
 
             {isPaletteOpen && selectedTextObject && (
                 <div className={styles.paletteDisplay}>
-                    <Palette onPickColor={onPickColor}/>
+                    <Palette defaultColor={color} onPickColor={onPickColor}/>
                 </div>
             )}
        </div> 

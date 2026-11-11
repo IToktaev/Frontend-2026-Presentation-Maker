@@ -30,6 +30,10 @@
     border: 3px solid #fff;
 }
 
+.activeColor {
+    transform: scale(1.2);
+}
+
 .red {
     background-color: red;
 }
@@ -70,7 +74,6 @@
 
 .color:hover {
     cursor: pointer;
-    transform: scale(1.2);
 }
 
 .colorPicker:hover {

@@ -92,10 +92,14 @@ function duplicateSlide(
 function setBackgroundInPresentation(
     presentation: Presentation,
     params: {
-        slideId: string
+        slideId: string | null
         background: Background
     }
 ): Presentation {
+    if (!params.slideId) {
+        return presentation
+    }
+
     return {
         ...presentation,
         slides: presentation.slides.map(slide => {
