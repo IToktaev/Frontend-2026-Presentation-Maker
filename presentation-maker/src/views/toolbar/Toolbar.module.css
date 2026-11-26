@@ -96,5 +96,18 @@ h3 {
 
 .slideShow:hover, .voiceInfo:hover {
     transform: scale(1.1);
-    background-color: #f6ff00;
+    background-color: #ff0000;
+}
+
+.pdfExport {
+    padding: 20px;
+    background-color: #ff0000;
+    font-size: 28px;
+    border-radius: 10px;
+    color: #ffffff;
+    transition: 0.2s ease;
+}
+
+.pdfExport:hover {
+    transform: scale(1.1);
 }

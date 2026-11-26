@@ -19,7 +19,7 @@ type TextProps = {
 function Text({ object, scale, slideId }: TextProps) {
     const [isEditing, setIsEditing] = useState(false)
     const [value, setValue] = useState(object.text)
-    const textareaRef = useRef<HTMLTextAreaElement>(null)
+    const divRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
         if (!isEditing) {
@@ -30,11 +30,7 @@ function Text({ object, scale, slideId }: TextProps) {
     const handleDoubleClick = () => {
         setIsEditing(true)
         setEditableTextObjectId(object.id)
-        textareaRef.current?.focus()
-    }
-
-    const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setValue(event.target.value)
+        divRef.current?.focus()
     }
 
     const onUpdateText = () => {
@@ -53,13 +49,17 @@ function Text({ object, scale, slideId }: TextProps) {
         setEditableTextObjectId(null)
     }
 
+    const handleInput = (event: React.FormEvent<HTMLDivElement>) => {
+        setValue(event.currentTarget.innerText)
+    }
+
     useEffect(() => {
         if (!isEditing) {
             return
         }
 
         const handleMouseDown = (event: MouseEvent) => {
-            if (!textareaRef.current?.contains(event.target as Node)) {
+            if (!divRef.current?.contains(event.target as Node)) {
                 finishEditing()
                 window.getSelection()?.removeAllRanges()
             }
@@ -73,15 +73,16 @@ function Text({ object, scale, slideId }: TextProps) {
     }, [isEditing, value])
 
     return (
-        <textarea
-            ref={textareaRef}
-            value={value}
-            readOnly={!isEditing}
+        <div
+            ref={divRef}
+            contentEditable={isEditing}
+            suppressContentEditableWarning
+            onInput={handleInput}
             onKeyDown={(event) => {
                 if (event.key === "Enter") {
                     event.preventDefault()
                     finishEditing()
-                    textareaRef.current?.blur()
+                    divRef.current?.blur()
                 }
             }}
             onDoubleClick={handleDoubleClick}
@@ -90,13 +91,12 @@ function Text({ object, scale, slideId }: TextProps) {
                     event.preventDefault()
                 }
             }}
-            onChange={handleChange}
             style={{
                 position: "absolute",
                 left: object.position.x * scale,
                 top: object.position.y * scale,
                 width: object.size.width * scale,
-                height: object.size.height * scale,
+                minHeight: object.size.height * scale,
                 fontWeight: object.fontWeight,
                 fontStyle: object.fontStyle,
                 textDecoration: object.textDecoration,
@@ -105,13 +105,17 @@ function Text({ object, scale, slideId }: TextProps) {
                 color: object.color,
                 background: "none",
                 border: "none",
-                resize: "none",
                 outline: "none",
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
+                lineHeight: 1.2,
+                overflow: "visible",
                 userSelect: isEditing ? "text" : "none",
                 cursor: isEditing ? "text" : "inherit",
-                overflow: "hidden",
             }}
-        />
+        >
+            {value}
+        </div>
     )
 }
 

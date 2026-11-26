@@ -1,4 +1,4 @@
-import type { RectangleObject } from "../../../model/types/objects";
+import type { RectangleObject } from "../../../model/types/objects"
 
 type RectangleProps = {
     object: RectangleObject
@@ -7,24 +7,17 @@ type RectangleProps = {
 
 function Rectangle({ object, scale }: RectangleProps) {
     return (
-        <svg
-            width={object.size.width * scale}
-            height={object.size.height * scale}
+        <div
             style={{
-                position: 'absolute',
+                position: "absolute",
                 left: object.position.x * scale,
                 top: object.position.y * scale,
+                width: object.size.width * scale,
+                height: object.size.height * scale,
+                backgroundColor: object.color,
             }}
-        >
-            <rect
-                x={0}
-                y={0}
-                width={object.size.width * scale}
-                height={object.size.height * scale}
-                fill={object.color}
-            />
-        </svg>
-    );
+        />
+    )
 }
 
-export { Rectangle };
+export { Rectangle }

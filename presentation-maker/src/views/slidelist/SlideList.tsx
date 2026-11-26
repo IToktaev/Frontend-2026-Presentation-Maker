@@ -1,7 +1,7 @@
 import type { Slide as SlideData } from '../../model/types/slide'
 import { getSelectedSlideIds, selectSlide } from '../../viewModel/viewModel'
 import { Slide } from '../slide/Slide'
-import styles from './slideList.module.css'
+import styles from './SlideList.module.css'
 
 type WorkSpaceProps = {
     slides: SlideData[]

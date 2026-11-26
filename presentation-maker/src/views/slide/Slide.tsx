@@ -53,7 +53,7 @@ function Slide({scale, slide, onObjectClick, contentRef, children, isObjectInter
         return(
             <div 
                 ref={contentRef}
-                className={styles.content}
+                className={`${styles.content} slide-export`}
                 style={{
                     width: width * scale,
                     height: height * scale,

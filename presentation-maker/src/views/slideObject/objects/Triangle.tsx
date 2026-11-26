@@ -1,4 +1,4 @@
-import type { TriangleObject } from "../../../model/types/objects";
+import type { TriangleObject } from "../../../model/types/objects"
 
 type TriangleProps = {
     object: TriangleObject
@@ -6,24 +6,33 @@ type TriangleProps = {
 }
 
 function Triangle({ object, scale }: TriangleProps) {
+    const xs = [object.point1.x, object.point2.x, object.point3.x]
+    const ys = [object.point1.y, object.point2.y, object.point3.y]
+    const minX = Math.min(...xs)
+    const minY = Math.min(...ys)
+    const width = Math.max(...xs) - minX
+    const height = Math.max(...ys) - minY
+
+    const toPercent = (x: number, y: number) =>
+        `${((x - minX) / width) * 100}% ${((y - minY) / height) * 100}%`
+
     return (
-        <svg
-            width="100%"
-            height="100%"
+        <div
             style={{
-                position: 'absolute',
+                position: "absolute",
+                left: minX * scale,
+                top: minY * scale,
+                width: width * scale,
+                height: height * scale,
+                backgroundColor: object.color,
+                clipPath: `polygon(
+                    ${toPercent(object.point1.x, object.point1.y)}, 
+                    ${toPercent(object.point2.x, object.point2.y)}, 
+                    ${toPercent(object.point3.x, object.point3.y)}
+                )`,
             }}
-        >
-            <polygon
-                points={`
-                    ${object.point1.x * scale},${object.point1.y * scale}
-                    ${object.point2.x * scale},${object.point2.y * scale}
-                    ${object.point3.x * scale},${object.point3.y * scale}
-                `}
-                fill={object.color}
-            />
-        </svg>
-    );
+        />
+    )
 }
 
-export { Triangle };
+export { Triangle }
