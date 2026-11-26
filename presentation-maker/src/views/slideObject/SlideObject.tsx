@@ -4,7 +4,11 @@ import { Image } from "./objects/Image"
 import { Circle } from "./objects/Circle"
 import { Rectangle } from "./objects/Rectangle"
 import { Triangle } from "./objects/Triangle"
-import type { CircleObject, RectangleObject, TriangleObject } from "../../model/types/objects"
+import type {
+    CircleObject,
+    RectangleObject,
+    TriangleObject
+} from "../../model/types/objects"
 import { selectObject } from "../../viewModel/viewModel"
 import type React from "react"
 
@@ -13,10 +17,15 @@ type ObjectProps = {
     scale: number
     isInteractive: boolean
     slideId: string
-};
+}
 
-function SlideObject({ object, scale, isInteractive, slideId }: ObjectProps) {
-    let content
+function SlideObject({
+    object,
+    scale,
+    isInteractive,
+    slideId
+}: ObjectProps) {
+    let content = null
 
     const handleMouseDown = (event: React.MouseEvent) => {
         if (isInteractive) {
@@ -25,28 +34,50 @@ function SlideObject({ object, scale, isInteractive, slideId }: ObjectProps) {
     }
 
     if (object.type === 'text') {
-        content = Text(object, scale, slideId)
+        content = (
+            <Text
+                object={object}
+                scale={scale}
+                slideId={slideId}
+            />
+        )
     } else if (object.type === 'image') {
-        content = Image(object, scale)
+        content = (
+            <Image
+                object={object}
+                scale={scale}
+            />
+        )
     } else if (object.type === 'figure') {
         if (object.figureType === 'circle') {
-            content = Circle(object as CircleObject, scale)
+            content = (
+                <Circle
+                    object={object as CircleObject}
+                    scale={scale}
+                />
+            )
         } else if (object.figureType === 'rectangle') {
-            content = Rectangle(object as RectangleObject, scale)
+            content = (
+                <Rectangle
+                    object={object as RectangleObject}
+                    scale={scale}
+                />
+            )
         } else if (object.figureType === 'triangle') {
-            content = Triangle(object as TriangleObject, scale)
+            content = (
+                <Triangle
+                    object={object as TriangleObject}
+                    scale={scale}
+                />
+            )
         }
     }
 
     return (
-        <div 
-            onMouseDown={(event) => handleMouseDown(event)}
-        >
+        <div onMouseDown={handleMouseDown}>
             {content}
         </div>
     )
 }
 
-export {
-    SlideObject
-}
+export { SlideObject }

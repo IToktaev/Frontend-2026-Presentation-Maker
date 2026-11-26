@@ -230,3 +230,5 @@ function SlideTools() {
 export {
     SlideTools
 }
+
+//надо ВООБЩЕ ВЕЗДЕ исправить прикол с изменением модели по onChange (особенно в Color Picker)) 

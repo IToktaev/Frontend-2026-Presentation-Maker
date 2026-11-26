@@ -7,6 +7,10 @@
     user-select: none;
 }
 
+.workspace * {
+    cursor: inherit;
+}
+
 .selectedArea {
     border: 5px solid red;
     box-sizing: border-box;
@@ -23,8 +27,4 @@
     bottom: 0;
     right: 0;
     pointer-events: auto;
-}
-
-.resizeMarker:hover {
-    cursor: nwse-resize;
 }

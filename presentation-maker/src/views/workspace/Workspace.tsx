@@ -9,11 +9,12 @@ import { useResize } from '../../hooks/useResize'
 
 type WorkSpaceProps = {
     slides: SlideData[]
+    localChangedObjects: SlideObject[]
 }
 
 const OFFSET = 5
 
-function Workspace({slides}: WorkSpaceProps) {
+function Workspace({slides, localChangedObjects}: WorkSpaceProps) {
     const onClickToObject = (event: React.MouseEvent) => {
         if (window.getSelection()?.toString()) {
             return
@@ -62,17 +63,11 @@ function Workspace({slides}: WorkSpaceProps) {
     const slideWithModifiedObjects = {
         ...slide,
         slideObjects: slide.slideObjects.map(object => {
+            const localObject = localChangedObjects.find(item => item.id === object.id)
             const dragged = draggedObjects.find(item => item.id === object.id)
             const resized = resizedObjects.find(item => item.id === object.id)
-            if (dragged) {
-                return dragged
-            }
-
-            if (resized) {
-                return resized
-            }
-
-            return object
+            
+            return resized ?? dragged ?? localObject ?? object
         })
     }
 
@@ -120,6 +115,9 @@ function Workspace({slides}: WorkSpaceProps) {
                         <div 
                             className={styles.resizeMarker} 
                             ref={resizeMarkerRef} 
+                            style={{ 
+                                cursor: draggedObjects.length > 0  ? 'inherit' : 'nwse-resize' 
+                            }}
                         />
                     </div>
                 )}

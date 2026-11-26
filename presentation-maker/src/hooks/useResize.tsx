@@ -37,7 +37,7 @@ function useResize(
 
         const onMouseDown = (event: MouseEvent) => {
             const container = slideContainer.current
-            if (!container || event.target !== resizeMarker.current) {
+            if (!container) {
                 return
             }
 
@@ -91,10 +91,10 @@ function useResize(
             document.removeEventListener("mouseup", onMouseUp)
         }
 
-        document.addEventListener("mousedown", onMouseDown)
+        resizeMarker.current?.addEventListener("mousedown", onMouseDown)
 
         return () => {
-            document.removeEventListener("mousedown", onMouseDown)
+            resizeMarker.current?.removeEventListener("mousedown", onMouseDown)
             document.removeEventListener("mousemove", onMouseMove)
             document.removeEventListener("mouseup", onMouseUp)
         }
@@ -106,3 +106,6 @@ function useResize(
 export {
     useResize
 }
+
+//моргание курсора
+//при dnd курсор может быть ресайзом

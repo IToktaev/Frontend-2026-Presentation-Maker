@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import styles from './App.module.css'
 import { useKeyBoard } from './hooks/useKeyBoard'
 import type { Presentation } from './model/types/presentation'
@@ -6,6 +7,7 @@ import { PreviewOverlay } from './views/previewOverlay/PreviewOverlay'
 import { SlideList } from './views/slidelist/SlideList'
 import { Toolbar } from './views/toolbar/Toolbar'
 import { Workspace } from './views/workspace/Workspace'
+import type { SlideObject } from './model/types/objects'
 
 type AppProps = {
     presentation: Presentation
@@ -14,13 +16,19 @@ type AppProps = {
 function App({presentation}: AppProps) {
   useKeyBoard()
 
+  const [localChangedObjects, setLocalChangedObjects] = useState<SlideObject[]>([])
+
   if (!getPreviewMode()) {
     return (
       <div className={styles.page}>
-        <Toolbar presentation={presentation} />
+        <Toolbar 
+          presentation={presentation}
+          localChangedObjects={localChangedObjects}
+          onLocalChangedObjectsChange={setLocalChangedObjects}
+        />
         <div className={styles.main}>
           <SlideList slides={presentation.slides} />
-          <Workspace slides={presentation.slides} />
+          <Workspace slides={presentation.slides} localChangedObjects={localChangedObjects} />
         </div>
       </div>
     )
@@ -36,5 +44,6 @@ function App({presentation}: AppProps) {
 
 export default App
 
-//кастомный хук
-//сброс всех выделенных при клике мимо
+//в целом надо быть очень внимательным с обновлением модели в этой лабе, т.к. потому будут проблемы 
+//с ctrl + Z
+//глубина истории должна быть ограничена

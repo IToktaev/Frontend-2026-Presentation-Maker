@@ -41,3 +41,5 @@ function useTextProperties(selectedObject: TextObject | undefined) {
 export {
     useTextProperties
 }
+
+//избавиться от useEffect и мемоизировать именно эту функцию

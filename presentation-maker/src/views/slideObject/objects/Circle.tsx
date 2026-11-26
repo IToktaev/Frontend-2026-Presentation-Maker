@@ -1,6 +1,11 @@
 import type { CircleObject } from "../../../model/types/objects";
 
-function Circle(object: CircleObject, scale: number) {
+type CircleProps = {
+    object: CircleObject
+    scale: number
+}
+
+function Circle({ object, scale }: CircleProps) {
     return (
         <svg
             width={object.size.width * scale}
@@ -18,9 +23,7 @@ function Circle(object: CircleObject, scale: number) {
                 fill={object.color}
             />
         </svg>
-    )
+    );
 }
 
-export { 
-    Circle 
-}
+export { Circle };

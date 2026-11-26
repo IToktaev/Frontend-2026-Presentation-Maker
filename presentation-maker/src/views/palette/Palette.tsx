@@ -1,13 +1,27 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styles from './Palette.module.css'
 
 type PaletteProps = {
     defaultColor?: string
     onPickColor: (color: string) => void
+    onChangeColor?: (color: string) => void
 }
 
-function Palette({ defaultColor, onPickColor }: PaletteProps) {
-    const [currentColor, setCurrentColor] = useState<string>('')
+function Palette({ defaultColor, onPickColor, onChangeColor }: PaletteProps) {
+    const [currentColor, setCurrentColor] = useState<string>(defaultColor ?? '#000000')
+
+    useEffect(() => {
+        setCurrentColor(defaultColor ?? '#000000')
+    }, [defaultColor])
+
+    const handleColorChange = (color: string) => {
+        setCurrentColor(color)
+        onChangeColor?.(color)
+    }
+
+    const handleColorPick = () => {
+        onPickColor(currentColor)
+    }
 
     const redColor = styles.color + ' ' + styles.red
     const orangeColor = styles.color + ' ' + styles.orange
@@ -89,11 +103,9 @@ function Palette({ defaultColor, onPickColor }: PaletteProps) {
             <input
                 type="color"
                 className={styles.colorPicker}
-                value={defaultColor}
-                onChange={(event) => {
-                    onPickColor(event.target.value); 
-                    setCurrentColor(event.target.value)
-                }}
+                value={currentColor}
+                onChange={(event) => handleColorChange(event.target.value)}
+                onBlur={handleColorPick}
             />
         </div>
     )

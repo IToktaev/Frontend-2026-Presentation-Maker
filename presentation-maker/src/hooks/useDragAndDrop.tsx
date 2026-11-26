@@ -108,3 +108,5 @@ function useDragAndDrop(
 export {
     useDragAndDrop
 }
+
+//dnd ТОЛЬКО при onMouseDown конкретно на выделенную область

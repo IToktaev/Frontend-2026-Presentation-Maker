@@ -1,12 +1,31 @@
-import { useEffect, useRef, useState } from "react";
-import type { TextObject } from "../../../model/types/objects";
-import { getEditableTextObjectId, setEditableTextObjectId } from "../../../viewModel/viewModel";
-import { dispatch } from "../../../model/editor";
-import { updateObjectsInPresentation, updateText } from "../../../model/functions/objects";
+import { useEffect, useRef, useState } from "react"
+import type { TextObject } from "../../../model/types/objects"
+import {
+    getEditableTextObjectId,
+    setEditableTextObjectId
+} from "../../../viewModel/viewModel"
+import { dispatch } from "../../../model/editor"
+import {
+    updateObjectsInPresentation,
+    updateText
+} from "../../../model/functions/objects"
 
-function Text(object: TextObject, scale: number, slideId: string) {
+type TextProps = {
+    object: TextObject
+    scale: number
+    slideId: string
+}
+
+function Text({ object, scale, slideId }: TextProps) {
     const [isEditing, setIsEditing] = useState(false)
+    const [value, setValue] = useState(object.text)
     const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+    useEffect(() => {
+        if (!isEditing) {
+            setValue(object.text)
+        }
+    }, [object.text, isEditing])
 
     const handleDoubleClick = () => {
         setIsEditing(true)
@@ -15,53 +34,65 @@ function Text(object: TextObject, scale: number, slideId: string) {
     }
 
     const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-        if (object.type === 'text') {
-            const editableTextObjectId = getEditableTextObjectId()
+        setValue(event.target.value)
+    }
 
-            dispatch(updateObjectsInPresentation, {
-                slideId: slideId,
-                objectIds: editableTextObjectId ? [editableTextObjectId] : [],
-                update: (object) => {
-                    return updateText(object, event.target.value)
-                },
-            })
-        }
+    const onUpdateText = () => {
+        const editableTextObjectId = getEditableTextObjectId()
+
+        dispatch(updateObjectsInPresentation, {
+            slideId,
+            objectIds: editableTextObjectId ? [editableTextObjectId] : [],
+            update: (currentObject) => updateText(currentObject, value),
+        })
+    }
+
+    const finishEditing = () => {
+        onUpdateText()
+        setIsEditing(false)
+        setEditableTextObjectId(null)
     }
 
     useEffect(() => {
         if (!isEditing) {
             return
-        } 
+        }
 
         const handleMouseDown = (event: MouseEvent) => {
             if (!textareaRef.current?.contains(event.target as Node)) {
-                setIsEditing(false)
-                setEditableTextObjectId(null)
+                finishEditing()
                 window.getSelection()?.removeAllRanges()
             }
         }
 
-        document.addEventListener('mousedown', handleMouseDown)
+        document.addEventListener("mousedown", handleMouseDown)
 
         return () => {
-            document.removeEventListener('mousedown', handleMouseDown)
+            document.removeEventListener("mousedown", handleMouseDown)
         }
-    }, [isEditing])
+    }, [isEditing, value])
 
     return (
         <textarea
             ref={textareaRef}
-            value={object.text}
+            value={value}
             readOnly={!isEditing}
+            onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                    event.preventDefault()
+                    finishEditing()
+                    textareaRef.current?.blur()
+                }
+            }}
             onDoubleClick={handleDoubleClick}
             onMouseDown={(event) => {
                 if (!isEditing) {
                     event.preventDefault()
                 }
             }}
-            onChange={(event) => handleChange(event)}
+            onChange={handleChange}
             style={{
-                position: 'absolute',
+                position: "absolute",
                 left: object.position.x * scale,
                 top: object.position.y * scale,
                 width: object.size.width * scale,
@@ -72,18 +103,16 @@ function Text(object: TextObject, scale: number, slideId: string) {
                 fontSize: object.fontSize * scale,
                 fontFamily: object.fontFamily,
                 color: object.color,
-                background: 'none',
-                border: 'none',
-                resize: 'none',
-                outline: 'none',
-                userSelect: isEditing ? 'text' : 'none',
-                cursor: isEditing ? 'text' : 'default',
-                overflow: 'hidden'
+                background: "none",
+                border: "none",
+                resize: "none",
+                outline: "none",
+                userSelect: isEditing ? "text" : "none",
+                cursor: isEditing ? "text" : "inherit",
+                overflow: "hidden",
             }}
         />
     )
 }
 
-export { 
-    Text 
-}
+export { Text }

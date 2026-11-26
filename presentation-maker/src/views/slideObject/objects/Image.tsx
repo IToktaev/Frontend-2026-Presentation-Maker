@@ -1,6 +1,11 @@
 import type { ImageObject } from "../../../model/types/objects";
 
-function Image(object: ImageObject, scale: number) {
+type ImageProps = {
+    object: ImageObject
+    scale: number
+}
+
+function Image({ object, scale }: ImageProps) {
     return (
         <img
             style={{
@@ -11,11 +16,10 @@ function Image(object: ImageObject, scale: number) {
                 height: object.size.height * scale,
             }}
             src={object.src}
-            draggable="false"
+            draggable={false}
+            alt=""
         />
-    )
+    );
 }
 
-export {
-    Image
-}
+export { Image };

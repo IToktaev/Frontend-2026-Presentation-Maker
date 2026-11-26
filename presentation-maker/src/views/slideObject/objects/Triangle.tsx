@@ -1,12 +1,17 @@
 import type { TriangleObject } from "../../../model/types/objects";
 
-function Triangle(object: TriangleObject, scale: number) {
+type TriangleProps = {
+    object: TriangleObject
+    scale: number
+}
+
+function Triangle({ object, scale }: TriangleProps) {
     return (
         <svg
             width="100%"
             height="100%"
             style={{
-                position: 'absolute'
+                position: 'absolute',
             }}
         >
             <polygon
@@ -18,9 +23,7 @@ function Triangle(object: TriangleObject, scale: number) {
                 fill={object.color}
             />
         </svg>
-    )
+    );
 }
 
-export {
-    Triangle
-}
+export { Triangle };

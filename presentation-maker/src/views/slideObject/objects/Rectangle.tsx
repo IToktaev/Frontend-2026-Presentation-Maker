@@ -1,6 +1,11 @@
 import type { RectangleObject } from "../../../model/types/objects";
 
-function Rectangle(object: RectangleObject, scale: number) {
+type RectangleProps = {
+    object: RectangleObject
+    scale: number
+}
+
+function Rectangle({ object, scale }: RectangleProps) {
     return (
         <svg
             width={object.size.width * scale}
@@ -19,9 +24,7 @@ function Rectangle(object: RectangleObject, scale: number) {
                 fill={object.color}
             />
         </svg>
-    )
+    );
 }
 
-export { 
-    Rectangle 
-}
+export { Rectangle };

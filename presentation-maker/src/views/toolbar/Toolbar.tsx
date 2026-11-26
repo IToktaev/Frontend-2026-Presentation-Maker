@@ -11,9 +11,12 @@ import type { Presentation } from '../../model/types/presentation'
 import { setPreviewMode } from '../../viewModel/viewModel'
 import { dispatch } from '../../model/editor'
 import { updatePresentationTitle } from '../../model/functions/presentation'
+import type { SlideObject } from '../../model/types/objects'
 
 type ToolbarProps = {
-    presentation: Presentation
+    presentation: Presentation,
+    localChangedObjects: SlideObject[]
+    onLocalChangedObjectsChange: (objects: SlideObject[]) => void
 }
 
 function handleSlideShow() {
@@ -24,7 +27,7 @@ function handlePresTitleInput(value: string) {
     dispatch(updatePresentationTitle, value)
 }
 
-function Toolbar({presentation}: ToolbarProps) {
+function Toolbar({presentation, localChangedObjects, onLocalChangedObjectsChange}: ToolbarProps) {
     return(
         <div className={styles.toolbar}>
             <div className={styles.title}>
@@ -37,7 +40,10 @@ function Toolbar({presentation}: ToolbarProps) {
             </div>
 
             <SlideTools />
-            <Tools />
+            <Tools 
+                localChangedObjects={localChangedObjects}
+                onLocalChangedObjectsChange={onLocalChangedObjectsChange}
+            />
 
             <div className={styles.slideShowBlock}>
                 <h3 className={styles.slideShowTitle}>Слайд-шоу</h3>
