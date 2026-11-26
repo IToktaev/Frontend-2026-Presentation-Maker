@@ -1,0 +1,56 @@
+.preview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+    flex-direction: column;
+}
+
+.switchPanel {
+    display: flex;
+    flex-direction: row;
+    width: 500px;
+    justify-content: space-between;
+    position: absolute;
+    z-index: 1;
+    bottom: 10px;
+}
+
+.cross img {
+    display: block;
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    z-index: 1;
+    right: 30px;
+    top: 30px;
+    transition: 0.2s ease;
+}
+
+.cross img:hover {
+    transform: scale(1.1);
+}
+
+.counter {
+    font-size: 32px;
+}
+
+.switcher {
+    background-color: #000000;
+    color: #ffffff;
+    width: 200px;
+    height: 80px;
+    font-size: 32px;
+    border-radius: 10px;
+    transition: 0.2s ease;
+}
+
+.switcherDisabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.switcher:hover {
+    transform: scale(1.1);
+}

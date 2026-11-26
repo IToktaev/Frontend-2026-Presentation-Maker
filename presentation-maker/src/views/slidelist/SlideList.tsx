@@ -1,0 +1,44 @@
+import type { Slide as SlideData } from '../../model/types/slide'
+import { getSelectedSlideIds, selectSlide } from '../../viewModel/viewModel'
+import { Slide } from '../slide/Slide'
+import styles from './SlideList.module.css'
+
+type WorkSpaceProps = {
+    slides: SlideData[]
+}
+
+function handleSlideClick(slideId: string, ctrlKey: boolean) {
+    selectSlide(slideId, ctrlKey)
+}
+
+function SlideList({slides}: WorkSpaceProps) {
+    const selectedSlideIds = getSelectedSlideIds()
+
+    return (
+        <div className={styles.slideList}>
+            {slides.map((slide) => {
+                const isSelected = selectedSlideIds.includes(slide.id)
+
+                return (
+                    <div
+                        key={slide.id}
+                        className={isSelected ? styles.selectedSlide : styles.slide}
+                        onClick={(event) =>
+                            handleSlideClick(slide.id, event.ctrlKey)
+                        }
+                    >
+                        <Slide
+                            scale={0.2}
+                            slide={slide}
+                            isObjectInteractive={false}
+                        />
+                    </div>
+                )
+            })}
+        </div>
+    )
+}
+
+export {
+    SlideList
+}
