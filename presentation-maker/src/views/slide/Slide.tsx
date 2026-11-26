@@ -38,7 +38,10 @@ function getBackgroundStyle(background: SlideData['background']) {
                 ${background.angle}deg,
                 ${background.colors[0]},
                 ${background.colors[1]}
-            )`
+            )`,
+            backgroundSize: '101% 101%',
+            backgroundPosition: '0 0',
+            backgroundRepeat: 'no-repeat',
         }
     }
 }

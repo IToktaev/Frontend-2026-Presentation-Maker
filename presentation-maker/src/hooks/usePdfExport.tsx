@@ -5,7 +5,11 @@ import html2canvas from "html2canvas"
 
 function usePdfExport() {
     const exportToPdf = useCallback(async (presentation: Presentation) => {
-        const pdf = new jsPDF()
+        const pdf = new jsPDF({
+            orientation: "landscape",
+            unit: "px",
+            format: [1700, 880]
+        })
         const slides = document.querySelectorAll<HTMLElement>(".slide-export")
 
         if (!slides) {
@@ -24,8 +28,11 @@ function usePdfExport() {
             }
 
             const pageWidth = pdf.internal.pageSize.getWidth()
-            const pageHeight = pdf.internal.pageSize.getHeight()
-            const scale = Math.min(pageWidth / canvas.width, pageHeight / canvas.height)
+
+            const imgWidth = pageWidth;
+            const imgHeight = (canvas.height / canvas.width) * pageWidth 
+
+            const scale = Math.min(imgWidth / canvas.width, imgHeight / canvas.height)
 
             pdf.addImage(image, "PNG", 0, 0, canvas.width * scale, canvas.height * scale)
         }
