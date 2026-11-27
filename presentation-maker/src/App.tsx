@@ -8,6 +8,7 @@ import { SlideList } from './views/slidelist/SlideList'
 import { Toolbar } from './views/toolbar/Toolbar'
 import { Workspace } from './views/workspace/Workspace'
 import type { SlideObject } from './model/types/objects'
+import { useHistoryUI } from './hooks/useHistory'
 
 type AppProps = {
     presentation: Presentation
@@ -18,6 +19,8 @@ function App({presentation}: AppProps) {
 
   const [localChangedObjects, setLocalChangedObjects] = useState<SlideObject[]>([])
 
+  const { canUndo, canRedo, onUndo, onRedo } = useHistoryUI();
+
   if (!getPreviewMode()) {
     return (
       <div className={styles.page}>
@@ -25,6 +28,10 @@ function App({presentation}: AppProps) {
           presentation={presentation}
           localChangedObjects={localChangedObjects}
           onLocalChangedObjectsChange={setLocalChangedObjects}
+          canUndo={canUndo}
+          canRedo={canRedo}
+          onUndo={onUndo}
+          onRedo={onRedo}
         />
         <div className={styles.main}>
           <SlideList slides={presentation.slides} />

@@ -75,9 +75,15 @@ function useDragAndDrop(
             })))
         }
 
-        const onMouseUp = () => {
+        const onMouseUp = (event: MouseEvent) => {
             const selected = selectedObjectsRef.current
             const moved = draggedObjectsRef.current
+
+            if (startX === event.clientX && startY === event.clientY) {
+                document.removeEventListener("mousemove", onMouseMove)
+                document.removeEventListener("mouseup", onMouseUp)
+                return
+            }
 
             dispatch(updateObjectsInPresentation, {
                 slideId: slide.id,
@@ -108,5 +114,3 @@ function useDragAndDrop(
 export {
     useDragAndDrop
 }
-
-//dnd ТОЛЬКО при onMouseDown конкретно на выделенную область

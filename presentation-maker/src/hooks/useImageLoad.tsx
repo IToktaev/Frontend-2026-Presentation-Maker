@@ -1,18 +1,29 @@
-import { useEffect, useState} from "react";
+import { useState, useCallback, useEffect, useRef } from "react"
 
-function useImageLoad(file: File | null): string | null {
+function useImageLoad(): {
+    dataUrl: string | null
+    loadImage: (file: File | null) => void
+} {
     const [dataUrl, setDataUrl] = useState<string | null>(null)
+    const readerRef = useRef<FileReader | null>(null)
 
-    useEffect(() => {
+    const loadImage = useCallback((file: File | null) => {
+        if (readerRef.current?.readyState === FileReader.LOADING) {
+            readerRef.current.abort()
+        }
+
         if (!file) {
             setDataUrl(null)
             return
         }
 
         const reader = new FileReader()
+        readerRef.current = reader
 
         reader.onload = () => {
-            setDataUrl(reader.result as string)
+            if (typeof reader.result === "string") {
+                setDataUrl(reader.result)
+            }
         }
 
         reader.onerror = () => {
@@ -21,19 +32,15 @@ function useImageLoad(file: File | null): string | null {
         }
 
         reader.readAsDataURL(file)
+    }, [])
 
+    useEffect(() => {
         return () => {
-            reader.onload = null
-            reader.onerror = null
-
-            reader.abort()
+            readerRef.current?.abort()
         }
+    }, [])
 
-    }, [file])
-
-    return dataUrl
+    return { dataUrl, loadImage }
 }
 
-export {
-    useImageLoad
-}
+export { useImageLoad }

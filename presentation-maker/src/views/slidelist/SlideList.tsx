@@ -31,6 +31,7 @@ function SlideList({slides}: WorkSpaceProps) {
                             scale={0.2}
                             slide={slide}
                             isObjectInteractive={false}
+                            exportClassName='slide-export'
                         />
                     </div>
                 )

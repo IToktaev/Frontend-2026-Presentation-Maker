@@ -17,6 +17,10 @@ type ToolbarProps = {
     presentation: Presentation,
     localChangedObjects: SlideObject[]
     onLocalChangedObjectsChange: (objects: SlideObject[]) => void
+    canUndo: boolean
+    canRedo: boolean
+    onUndo: () => void
+    onRedo: () => void
 }
 
 function handleSlideShow() {
@@ -27,7 +31,7 @@ function handlePresTitleInput(value: string) {
     dispatch(updatePresentationTitle, value)
 }
 
-function Toolbar({presentation, localChangedObjects, onLocalChangedObjectsChange}: ToolbarProps) {
+function Toolbar({presentation, localChangedObjects, onLocalChangedObjectsChange, canRedo, canUndo, onRedo, onUndo}: ToolbarProps) {
     const { exportToPdf } = usePdfExport()
 
     return(
@@ -47,6 +51,23 @@ function Toolbar({presentation, localChangedObjects, onLocalChangedObjectsChange
                 onLocalChangedObjectsChange={onLocalChangedObjectsChange}
             />
 
+            <div className={styles.historyButtons}>
+                <Button 
+                    className={canUndo ? styles.historyButton : styles.historyButton + ' ' + styles.historyButtonDisabled}
+                    onClick={onUndo}
+                    disabled={!canUndo}
+                >
+                    ↩
+                </Button>
+
+                <Button 
+                    className={canRedo ? styles.historyButton : styles.historyButton + ' ' + styles.historyButtonDisabled}
+                    onClick={onRedo}
+                    disabled={!canRedo}
+                >
+                    ↪
+                </Button>
+            </div>
 
             <Button className={styles.slideShow} onClick={handleSlideShow}>
                 <img src={SlideShowImage} />

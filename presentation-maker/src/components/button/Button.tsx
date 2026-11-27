@@ -5,6 +5,7 @@ type ButtonProps = {
     className?: string
     style?: React.CSSProperties
     onClick?: MouseEventHandler<HTMLButtonElement>
+    disabled?: boolean
 }
 
 function Button({children, className, onClick, style}: ButtonProps) {

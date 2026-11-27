@@ -90,6 +90,23 @@ h3 {
     display: block;
 }
 
+.historyButtons {
+    display: flex;
+    gap: 20px;
+}
+
+.historyButton {
+    font-size: 28px;
+    padding: 15px;
+    background-color: #000;
+    color: #fff;
+    border-radius: 5px;
+}
+
+.historyButtonDisabled {
+    opacity: 0.25;
+}
+
 .titleInput:focus {
     border: 3px solid #ffffff;
 }

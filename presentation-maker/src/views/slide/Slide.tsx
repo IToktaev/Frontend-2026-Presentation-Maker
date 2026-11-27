@@ -10,6 +10,7 @@ type SlideProps = {
     children?: React.ReactNode
     contentRef?: React.RefObject<HTMLDivElement | null>
     isObjectInteractive: boolean
+    exportClassName?: string
 }
 
 function getBackgroundStyle(background: SlideData['background']) {
@@ -46,7 +47,7 @@ function getBackgroundStyle(background: SlideData['background']) {
     }
 }
 
-function Slide({scale, slide, onObjectClick, contentRef, children, isObjectInteractive}: SlideProps) {
+function Slide({scale, slide, onObjectClick, contentRef, children, isObjectInteractive, exportClassName}: SlideProps) {
     const width = 1700
     const height = 880
 
@@ -56,7 +57,7 @@ function Slide({scale, slide, onObjectClick, contentRef, children, isObjectInter
         return(
             <div 
                 ref={contentRef}
-                className={`${styles.content} slide-export`}
+                className={styles.content + ' ' + exportClassName}
                 style={{
                     width: width * scale,
                     height: height * scale,

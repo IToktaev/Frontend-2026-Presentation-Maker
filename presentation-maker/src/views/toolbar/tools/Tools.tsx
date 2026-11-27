@@ -7,7 +7,7 @@ import FigureIcon from '../../../assets/figure-icon.png'
 
 import styles from './Tools.module.css'
 import { Palette } from "../../palette/Palette"
-import { useCallback, useEffect, useRef, useState} from "react"
+import { useEffect, useRef, useState} from "react"
 import { getCurrentSlideId, getSelectedObjectIds } from "../../../viewModel/viewModel"
 import { dispatch, getState } from "../../../model/editor"
 import type { SlideObject } from "../../../model/types/objects"
@@ -51,10 +51,9 @@ function clampFontSize(fontSize: number): number {
 
 function Tools({localChangedObjects, onLocalChangedObjectsChange }: ToolProps) {
     const [isPaletteOpen, setIsPaletteOpen] = useState<boolean>(false) 
-    const [file, setFile] = useState<File | null>(null)
     const [fontSize, setFontSize] = useState<number>(BASE_FONT_SIZE)
 
-    const src = useImageLoad(file)
+    const { dataUrl, loadImage } = useImageLoad()
 
     const presentation = getState()
     const selectedSlideId = getCurrentSlideId()
@@ -171,11 +170,13 @@ function Tools({localChangedObjects, onLocalChangedObjectsChange }: ToolProps) {
         updateSelectedText(object => updateFontStyle(object, value))
     }
 
-    const handleFileChange = useCallback(
-        (event: React.ChangeEvent<HTMLInputElement>) => {
-            setFile(event.target.files?.[0] ?? null)
-        }, []
-    )
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0] ?? null
+
+        loadImage(file)
+
+        event.target.value = ""
+    }
 
     const onUpdateFontSize = () => {
         updateSelectedText(object => updateFontSize(object, clampFontSize(fontSize)))
@@ -185,19 +186,18 @@ function Tools({localChangedObjects, onLocalChangedObjectsChange }: ToolProps) {
     useEffect(() => {
         const currentSlideId = getCurrentSlideId()
 
-        if (typeof src !== 'string' || !currentSlideId) {
+        if (typeof dataUrl !== 'string' || !currentSlideId) {
             return
         }
 
         const imageObject: SlideObject = createImage({
-            src: src,
+            src: dataUrl,
             position: NEW_OBJECT_POSITION,
             size: NEW_OBJECT_SIZE,
         }, generateId())
 
         dispatch(addObjectToPresentation, {slideId: currentSlideId, object: imageObject})
-        setFile(null)
-    }, [src])
+    }, [dataUrl])
 
     return(
        <div className ={styles.toolArea}>

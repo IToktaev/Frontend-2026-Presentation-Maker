@@ -15,7 +15,7 @@ import {
     setIdsBeforeRemoval
 } from '../../../viewModel/viewModel'
 import { Palette } from '../../palette/Palette'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useImageLoad } from '../../../hooks/useImageLoad'
 
 const MIN_DEGREE = 0
@@ -59,8 +59,7 @@ function SlideTools() {
     const [secondColor, setSecondColor] = useState<string>('#fff')
     const [degreeValue, setDegreeValue] = useState<number>(MIN_DEGREE)
 
-    const [file, setFile] = useState<File | null>(null)
-    const src = useImageLoad(file)
+    const {dataUrl, loadImage} = useImageLoad()
 
     const loadImageRef = useRef<HTMLInputElement | null>(null)
 
@@ -98,11 +97,13 @@ function SlideTools() {
         dispatch(setBackgroundInPresentation, {slideId: getCurrentSlideId(), background: background})
     }
 
-    const handleFileChange = useCallback(
-        (event: React.ChangeEvent<HTMLInputElement>) => {
-            setFile(event.target.files?.[0] ?? null)
-        }, []
-    )
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0] ?? null
+
+        loadImage(file)
+
+        event.target.value = ""
+    }
 
     const backgroundChangerRef = useRef<HTMLDivElement>(null)
     const backgroundButtonRef = useRef<HTMLDivElement>(null)
@@ -129,13 +130,13 @@ function SlideTools() {
     useEffect(() => {
         const currentSlideId = getCurrentSlideId()
 
-        if (typeof src !== 'string' || !currentSlideId) {
+        if (typeof dataUrl !== 'string' || !currentSlideId) {
             return
         }
 
-        const background = createBackgroundImage(src)
+        const background = createBackgroundImage(dataUrl)
         dispatch(setBackgroundInPresentation, {slideId: getCurrentSlideId(), background: background})
-    }, [src])
+    }, [dataUrl])
 
     return(  
        <div className ={styles.toolArea}>
@@ -230,5 +231,3 @@ function SlideTools() {
 export {
     SlideTools
 }
-
-//надо ВООБЩЕ ВЕЗДЕ исправить прикол с изменением модели по onChange (особенно в Color Picker)) 
